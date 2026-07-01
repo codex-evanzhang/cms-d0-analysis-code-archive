@@ -1,0 +1,5 @@
+kind	location	role	archive_policy
+lxplus_work_scripts	/afs/cern.ch/work/e/evzhang/codex-work/analysis/d0-reproduction/scripts	CERN-side execution copies of local D0 reproduction scripts	Represented by local source-of-truth copies; refresh requires CERN auth.
+cmssw_foresting	/afs/cern.ch/user/e/evzhang/Foresting/CMSSW_16_1_1/src	CMSSW/HiForest/Dfinder foresting environment	Not vendored; wrappers/configs/provenance recorded.
+eos_d0_outputs	/eos/user/e/evzhang/codex-eos/outputs/d0-reproduction	D0 ROOT outputs, skims, plots, CRAB products	Excluded as data/output products.
+official_reference_forests	/eos/cms/store/group/phys_heavyions/...	Official/reference CMS forests and MC samples used for validation	Excluded as external CMS data products.

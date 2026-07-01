@@ -1,0 +1,290 @@
+#!/usr/bin/env python3
+"""Fetch, render, and smoke-test official CMS D0 MC model fragments."""
+
+from __future__ import annotations
+
+import argparse
+import datetime as dt
+import json
+import os
+import shutil
+import subprocess
+import sys
+import urllib.request
+from pathlib import Path
+from typing import Any
+
+
+ROOT = Path(__file__).resolve().parents[1]
+MC_WORK = ROOT / "work" / "cms-official-mc"
+MCM_OUT = ROOT / "research" / "cms-d0-analysis" / "output" / "mcm"
+ANALYSIS_LEDGER = ROOT / "research" / "cms-d0-analysis" / "logs" / "analysis-ledger.jsonl"
+LXPLUS_HOST = os.environ.get("LXPLUS_SSH_HOST", "lxplus-codex")
+REMOTE_ROOT = Path("/afs/cern.ch/work/e/evzhang/codex-work/analysis/d0-reproduction/mc/official-model")
+REMOTE_CMSSW_ROOT = Path("/afs/cern.ch/work/e/evzhang/codex-work/cmssw")
+REMOTE_EOS_OUTPUT = Path("/eos/user/e/evzhang/codex-eos/outputs/d0-reproduction/official-mc-smoke")
+
+REQUESTS = {
+    "prompt": {
+        "prepid": "HIN-HINPbPbWinter24UPCGS-00001",
+        "fragment": "PromptGNucleusToD0PhotonBeamA_5362GeV_pythia8_evtgen_cfi.py",
+    },
+    "nonprompt": {
+        "prepid": "HIN-HINPbPbWinter24UPCGS-00003",
+        "fragment": "NonpromptGNucleusToD0PhotonBeamA_5362GeV_pythia8_evtgen_cfi.py",
+    },
+}
+
+
+def utc_now() -> str:
+    return dt.datetime.now(dt.UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+def rel(path: Path) -> str:
+    try:
+        return path.resolve().relative_to(ROOT.resolve()).as_posix()
+    except ValueError:
+        return str(path)
+
+
+def append_analysis_ledger(event: str, detail: str, source: Path | str = "", tags: list[str] | None = None) -> None:
+    ANALYSIS_LEDGER.parent.mkdir(parents=True, exist_ok=True)
+    row = {
+        "created_utc": utc_now(),
+        "event": event,
+        "detail": detail,
+        "source": str(source),
+        "tags": tags or [],
+    }
+    with ANALYSIS_LEDGER.open("a", encoding="utf-8") as handle:
+        handle.write(json.dumps(row, sort_keys=True) + "\n")
+
+
+def run(cmd: list[str], *, check: bool = True) -> subprocess.CompletedProcess[str]:
+    return subprocess.run(cmd, cwd=str(ROOT), text=True, check=check)
+
+
+def mcm_url(prepid: str) -> str:
+    return f"https://cms-pdmv-prod.web.cern.ch/mcm/public/restapi/requests/get/{prepid}"
+
+
+def fetch_json(prepid: str) -> dict[str, Any]:
+    with urllib.request.urlopen(mcm_url(prepid), timeout=60) as response:
+        return json.loads(response.read().decode("utf-8"))
+
+
+def extract_result(data: dict[str, Any], prepid: str) -> dict[str, Any]:
+    result = data.get("results")
+    if not isinstance(result, dict):
+        raise SystemExit(f"Unexpected McM response for {prepid}: missing results object")
+    if result.get("prepid") != prepid:
+        raise SystemExit(f"Unexpected McM response for {prepid}: got {result.get('prepid')}")
+    return result
+
+
+def command_fetch(_args: argparse.Namespace) -> int:
+    MCM_OUT.mkdir(parents=True, exist_ok=True)
+    for spec in REQUESTS.values():
+        prepid = spec["prepid"]
+        data = fetch_json(prepid)
+        extract_result(data, prepid)
+        path = MCM_OUT / f"{prepid}.json"
+        path.write_text(json.dumps(data, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+        print(f"wrote {rel(path)}")
+    append_analysis_ledger("official-mc-mcm-fetched", "Fetched prompt/nonprompt D0 McM JSON snapshots", MCM_OUT, ["mc", "mcm"])
+    return 0
+
+
+def load_mcm(prepid: str) -> dict[str, Any]:
+    path = MCM_OUT / f"{prepid}.json"
+    if not path.exists():
+        raise SystemExit(f"Missing {rel(path)}. Run: scripts/cms-official-mcctl fetch")
+    return extract_result(json.loads(path.read_text(encoding="utf-8")), prepid)
+
+
+def runnable_fragment(raw: str) -> str:
+    """Convert the McM fragment into the standard executable ExternalGeneratorFilter form.
+
+    McM preserves a malformed quoted concurrency-bypass line for these requests.
+    The physics settings are left unchanged; only the wrapper around the generator
+    module is normalized to the standard CMS pattern used by evtgen fragments.
+    """
+    text = raw.replace('generator = cms.EDFilter("Pythia8GeneratorFilter"', '_generator = cms.EDFilter("Pythia8GeneratorFilter"', 1)
+    text = text.replace("generator.PythiaParameters.processParameters.extend(EvtGenExtraParticles)", "_generator.PythiaParameters.processParameters.extend(EvtGenExtraParticles)")
+    lines = []
+    inserted_wrapper = False
+    for line in text.splitlines():
+        if line.strip().startswith('"_generator=cms.EDFilter'):
+            if not inserted_wrapper:
+                lines.extend(
+                    [
+                        "from GeneratorInterface.Core.ExternalGeneratorFilter import ExternalGeneratorFilter",
+                        "generator = ExternalGeneratorFilter(_generator)",
+                    ]
+                )
+                inserted_wrapper = True
+            continue
+        lines.append(line)
+    if not inserted_wrapper:
+        marker = "_generator.PythiaParameters.processParameters.extend(EvtGenExtraParticles)"
+        text = "\n".join(lines)
+        text = text.replace(
+            marker,
+            marker
+            + "\nfrom GeneratorInterface.Core.ExternalGeneratorFilter import ExternalGeneratorFilter"
+            + "\ngenerator = ExternalGeneratorFilter(_generator)",
+        )
+        lines = text.splitlines()
+    header = [
+        "# Official CMS McM D0 UPC fragment, locally normalized for execution.",
+        "# Physics settings are from the McM fragment; generator wrapping is the standard",
+        "# ExternalGeneratorFilter form needed for local cmsDriver/cmsRun tests.",
+        "",
+    ]
+    return "\n".join(header + lines).rstrip() + "\n"
+
+
+def command_render(_args: argparse.Namespace) -> int:
+    raw_dir = MC_WORK / "raw"
+    python_dir = MC_WORK / "python"
+    raw_dir.mkdir(parents=True, exist_ok=True)
+    python_dir.mkdir(parents=True, exist_ok=True)
+    for flavor, spec in REQUESTS.items():
+        result = load_mcm(spec["prepid"])
+        raw = result.get("fragment")
+        if not isinstance(raw, str) or "Pythia8GeneratorFilter" not in raw:
+            raise SystemExit(f"McM fragment missing or malformed for {spec['prepid']}")
+        raw_path = raw_dir / f"{spec['prepid']}_fragment_from_mcm.py"
+        raw_path.write_text(raw.rstrip() + "\n", encoding="utf-8")
+        fragment_path = python_dir / spec["fragment"]
+        fragment_path.write_text(runnable_fragment(raw), encoding="utf-8")
+        print(f"{flavor}: raw {rel(raw_path)}")
+        print(f"{flavor}: runnable {rel(fragment_path)}")
+    append_analysis_ledger("official-mc-fragments-rendered", "Rendered prompt/nonprompt official D0 MC fragments", python_dir, ["mc", "cmssw"])
+    return 0
+
+
+def ensure_rendered() -> None:
+    for spec in REQUESTS.values():
+        if not (MC_WORK / "python" / spec["fragment"]).exists():
+            raise SystemExit("Missing rendered fragments. Run: scripts/cms-official-mcctl render")
+
+
+def command_sync(_args: argparse.Namespace) -> int:
+    ensure_rendered()
+    run(["ssh", LXPLUS_HOST, f"mkdir -p {REMOTE_ROOT}/python {REMOTE_ROOT}/raw"])
+    local_python = sorted((MC_WORK / "python").glob("*.py"))
+    local_raw = sorted((MC_WORK / "raw").glob("*.py"))
+    if local_python:
+        run(["scp", *map(str, local_python), f"{LXPLUS_HOST}:{REMOTE_ROOT}/python/"])
+    if local_raw:
+        run(["scp", *map(str, local_raw), f"{LXPLUS_HOST}:{REMOTE_ROOT}/raw/"])
+    print(f"synced fragments to {LXPLUS_HOST}:{REMOTE_ROOT}")
+    append_analysis_ledger("official-mc-fragments-synced", f"Synced official D0 MC fragments to {REMOTE_ROOT}", REMOTE_ROOT, ["mc", "lxplus"])
+    return 0
+
+
+def remote_smoke_script(flavor: str, events: int, step: str) -> str:
+    spec = REQUESTS[flavor]
+    output = REMOTE_EOS_OUTPUT / f"{flavor}_{step.lower()}_{events}"
+    package_dir = REMOTE_CMSSW_ROOT / "CMSSW_14_1_7" / "src" / "EvanAnalysis" / "D0OfficialMC"
+    return f"""#!/usr/bin/env bash
+set -euo pipefail
+source /cvmfs/cms.cern.ch/cmsset_default.sh
+export SCRAM_ARCH=el9_amd64_gcc12
+mkdir -p {REMOTE_CMSSW_ROOT}
+cd {REMOTE_CMSSW_ROOT}
+if [[ ! -d CMSSW_14_1_7/src ]]; then
+  scram p CMSSW CMSSW_14_1_7
+fi
+cd CMSSW_14_1_7/src
+eval "$(scramv1 runtime -sh)"
+mkdir -p {package_dir}/python
+touch {package_dir}/__init__.py {package_dir}/python/__init__.py
+cp {REMOTE_ROOT}/python/{spec["fragment"]} {package_dir}/python/{spec["fragment"]}
+scram b -j 2
+mkdir -p {output}
+cd {output}
+cmsDriver.py EvanAnalysis/D0OfficialMC/{spec["fragment"]} \\
+  --python_filename {flavor}_{step.lower()}_{events}_cfg.py \\
+  --fileout file:{flavor}_{step.lower()}_{events}.root \\
+  --mc \\
+  --eventcontent RAWSIM \\
+  --datatier GEN-SIM \\
+  --conditions 141X_mcRun3_2024_realistic_HI_v14 \\
+  --beamspot DBrealistic \\
+  --step {step} \\
+  --scenario HeavyIons \\
+  --geometry DB:Extended \\
+  --era Run3_2024_UPC \\
+  --nThreads 1 \\
+  --no_exec \\
+  -n {events}
+cmsRun {flavor}_{step.lower()}_{events}_cfg.py > {flavor}_{step.lower()}_{events}.log 2>&1
+edmEventSize -v {flavor}_{step.lower()}_{events}.root > {flavor}_{step.lower()}_{events}_event_size.txt 2>&1 || true
+printf 'output_dir=%s\\n' {output}
+printf 'config=%s\\n' {output}/{flavor}_{step.lower()}_{events}_cfg.py
+printf 'root=%s\\n' {output}/{flavor}_{step.lower()}_{events}.root
+printf 'log=%s\\n' {output}/{flavor}_{step.lower()}_{events}.log
+"""
+
+
+def command_smoke(args: argparse.Namespace) -> int:
+    command_sync(args)
+    script = remote_smoke_script(args.flavor, args.events, args.step)
+    remote_script = REMOTE_ROOT / f"run_{args.flavor}_{args.step.lower()}_{args.events}_smoke.sh"
+    proc = subprocess.run(
+        ["ssh", LXPLUS_HOST, f"cat > {remote_script}; chmod +x {remote_script}; {remote_script}"],
+        cwd=str(ROOT),
+        text=True,
+        input=script,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+        check=False,
+    )
+    print(proc.stdout)
+    if proc.returncode != 0:
+        append_analysis_ledger("official-mc-smoke-failed", f"{args.flavor} {args.step} {args.events} events failed", remote_script, ["mc", "lxplus"])
+        return proc.returncode
+    append_analysis_ledger("official-mc-smoke-ok", f"{args.flavor} {args.step} {args.events} events completed", remote_script, ["mc", "lxplus"])
+    return 0
+
+
+def command_status(_args: argparse.Namespace) -> int:
+    for flavor, spec in REQUESTS.items():
+        result = load_mcm(spec["prepid"])
+        seq = result.get("sequences", [{}])[0]
+        gen_params = result.get("generator_parameters", [])
+        print(f"{flavor}: {spec['prepid']}")
+        print(f"  dataset: {result.get('dataset_name')}")
+        print(f"  status: {result.get('status')}")
+        print(f"  release: {result.get('cmssw_release')}")
+        print(f"  step: {','.join(seq.get('step', []))}")
+        print(f"  conditions: {seq.get('conditions')}")
+        print(f"  era: {seq.get('era')}")
+        print(f"  filter efficiencies: {[p.get('filter_efficiency') for p in gen_params]}")
+        print(f"  fragment: {rel(MC_WORK / 'python' / spec['fragment'])}")
+    return 0
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    sub = parser.add_subparsers(dest="command", required=True)
+
+    sub.add_parser("fetch", help="Fetch prompt/nonprompt McM JSON snapshots").set_defaults(func=command_fetch)
+    sub.add_parser("render", help="Render raw and runnable CMSSW fragments").set_defaults(func=command_render)
+    sub.add_parser("sync", help="Copy rendered fragments to LXPLUS work area").set_defaults(func=command_sync)
+    sub.add_parser("status", help="Print compact official MC model state").set_defaults(func=command_status)
+
+    smoke = sub.add_parser("smoke", help="Run a tiny official-release cmsDriver/cmsRun validation on LXPLUS")
+    smoke.add_argument("--flavor", choices=sorted(REQUESTS), default="prompt")
+    smoke.add_argument("--events", type=int, default=1)
+    smoke.add_argument("--step", choices=["GEN", "GEN,SIM"], default="GEN")
+    smoke.set_defaults(func=command_smoke)
+
+    args = parser.parse_args()
+    return args.func(args)
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

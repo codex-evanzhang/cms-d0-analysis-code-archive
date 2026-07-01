@@ -1,0 +1,170 @@
+# DOC_OWNER: cms-analysis-manager machine-readable selection-independence audit.
+# TOKEN_NOTE: run scripts/audit_selection_independence.py instead of rereading cut docs.
+version: 1
+updated_utc: "2026-06-19T00:00:00Z"
+policy:
+  use_an_for_selection_freeze: false
+  use_an_for_posthoc_validation: true
+  blind_signal_peak_for_cut_optimization: true
+  freeze_order:
+    - define physics target and reconstruction objects
+    - define control samples and sidebands
+    - define score, constraints, and rounding/coarsening
+    - derive cut or allowed plateau without AN constants
+    - freeze candidate selection
+    - compare to AN and run closure/systematic checks
+  status_levels:
+    independent: rule/value is currently defined without AN constants
+    partially_independent: rule is mostly independent but still uses an AN convention or target
+    an_specification: currently adopted from AN/specification and not independently derived
+    blocked: cannot be made independent with current samples/tools
+selection_elements:
+  - id: physics_target
+    group: scope
+    item: UPC PbPb D0 to K pi in 0nXn with rapidity gap
+    status: an_specification
+    current_definition: Reproduce the AN measurement target before extending to other hadrons.
+    a_priori_basis: Physics question supplied by supervisor/project; not a data-derived cut.
+    an_use: Defines the reproduction target.
+    overfit_risk: low
+    next_action: Treat as fixed scope, not an optimized selection.
+
+  - id: fiducial_pt_y_bins
+    group: fiducial
+    item: D0 pT and rapidity bins
+    status: partially_independent
+    current_definition: pT 2-5, 5-8, 8-12 GeV; |y| bins 0-1 and 1-2.
+    a_priori_basis: Detector acceptance, trigger/reconstruction reach, and enough statistics per bin.
+    an_use: Current bin edges are inherited from the AN target.
+    overfit_risk: medium
+    next_action: Produce MC/data acceptance and yield-stability plots showing why these are the natural bin boundaries.
+
+  - id: event_quality_filters
+    group: event
+    item: certified run/lumi and standard event-quality filters
+    status: partially_independent
+    current_definition: Good ZDC Golden JSON plus available reduced-tree filters including selectedVtxFilter and ClusterCompatibilityFilter.
+    a_priori_basis: CMS data-quality certification and standard collision-quality filters.
+    an_use: Need exact AN/event-production filter list for final parity.
+    overfit_risk: low
+    next_action: Reproduce full upstream filter list from CMSSW configs and CMS certification, then compare to AN.
+
+  - id: vertex_count
+    group: event
+    item: primary-vertex multiplicity
+    status: partially_independent
+    current_definition: 1 <= nVtx <= 3 in reduced-tree threshold scans.
+    a_priori_basis: Reject no-vertex events and high-pileup/multiple-interaction events while preserving UPC topology.
+    an_use: AN wording/code mismatch still needs resolution.
+    overfit_risk: medium
+    next_action: Plot nVtx versus ZDC/HF/track multiplicity and mass-sideband behavior; freeze before AN comparison.
+
+  - id: zdc_xor_topology
+    group: event
+    item: ZDC 0nXn XOR side definition
+    status: an_specification
+    current_definition: AN calibrated offline ZDC signal, ZDCsignal = HADsum + 0.1 EMsum; pass Xn0n if plus > 1100 GeV and minus < 1000 GeV, pass 0nXn if minus > 1000 GeV and plus < 1100 GeV, and require exactly one side to pass.
+    a_priori_basis: "Coherent photonuclear UPC topology: photon-going nucleus remains near 0n, opposite side dissociates."
+    an_use: Nominal side definition, signal formula, and thresholds are taken from the AN calibrated selection recipe.
+    overfit_risk: low
+    next_action: Keep topology definition fixed from AN/physics; validate branch calibration, EmptyBX 0n fake rate, Xn fitted-peak efficiency, and EM-pileup correction.
+
+  - id: zdc_1n_thresholds
+    group: event
+    item: ZDC one-neutron thresholds
+    status: an_specification
+    current_definition: ZDC plus > 1100 GeV and ZDC minus > 1000 GeV on the AN offline signal.
+    a_priori_basis: Thresholds sit below the fitted one-neutron peaks while keeping EmptyBX noise above threshold negligible and Xn inefficiency about 1 percent.
+    an_use: Numeric thresholds are AN calibrated values; data/EmptyBX and multipeak fits are now validation/efficiency checks, not nominal threshold optimization.
+    overfit_risk: medium
+    next_action: Reproduce the Appendix E ADC-to-fC, pedestal, gain, OOTPU, and TS2-TS1 construction where raw inputs exist; otherwise validate reduced-tree/forest branch closure against official ZDC sums.
+
+  - id: hf_gap_thresholds
+    group: event
+    item: HF rapidity-gap thresholds
+    status: partially_independent
+    current_definition: Blind full-stat HF scan gives plus 9.1 GeV and minus 8.6 GeV; AN-compatible 9.2 GeV plus point is posthoc plateau/closure only.
+    a_priori_basis: Require prompt-MC signal retention when available, high low-track data pass rate, bounded high-track data leakage, and EmptyBX sanity check.
+    an_use: AN nominal thresholds are retained only as posthoc reference markers in the table and plots.
+    overfit_risk: medium
+    next_action: Run mass-peak and corrected-yield closure for blind 9.1/8.6 versus AN-compatible 9.2/8.6 and treat the difference as a systematic if non-negligible.
+
+  - id: daughter_track_acceptance
+    group: candidate
+    item: daughter track pT, eta, and relative pT uncertainty
+    status: partially_independent
+    current_definition: Daughter pT > 1 GeV, |eta| < 2.4, pT error / pT < 0.1.
+    a_priori_basis: Tracker acceptance plus exploratory MC-signal/data-sideband scan. The eta cut is the tracker acceptance edge; the relative pT-error cut is near a plateau where loosening beyond 0.1 adds little MC signal but increases sideband leakage; the daughter pT cut is a signal/background compromise that suppresses soft combinatorics.
+    an_use: Current numeric values still match the AN/analysis code and should be treated as posthoc closure targets, not fully blind optima.
+    overfit_risk: medium
+    next_action: Run full-stat track-cut closure with final mass fits and vary pT threshold around 0.9/1.0/1.1 GeV as a systematic before final yields.
+
+  - id: d0_mass_fit_window
+    group: candidate
+    item: D0 mass fit window
+    status: partially_independent
+    current_definition: 1.70 < Dmass < 2.05 GeV for fitting/scan context.
+    a_priori_basis: Wide window around PDG D0 mass that includes sidebands and the peak without extreme combinatorial tails.
+    an_use: Current window matches AN convention.
+    overfit_risk: low
+    next_action: Show fit stability under wider/narrower predeclared windows.
+
+  - id: topology_sidebands
+    group: candidate
+    item: mass sideband window for topology/background optimization
+    status: independent
+    current_definition: 0.07 < |Dmass - 1.86484| < 0.12 GeV.
+    a_priori_basis: Per-bin MC truth-matched D0 mass resolution gives a global worst-bin 3-sigma to 5-sigma sideband, rounded to the nearest 10 MeV; data sideband balance and MC signal leakage are checked after freezing the rule.
+    an_use: AN sideband is a posthoc comparison target only; the derived window matches it.
+    overfit_risk: medium
+    next_action: Run final mass-fit closure and sideband-variation systematics before yield extraction.
+
+  - id: svpv_chi2_floors
+    group: candidate
+    item: DsvpvSig and Dchi2cl quality floors
+    status: independent
+    current_definition: Independent-sideband scan reproduces DsvpvSig > 2.5 low-pT, > 3.5 high-pT, and Dchi2cl > 0.1.
+    a_priori_basis: First floors that give measurable MC-background and data-sideband rejection while retaining most MC signal under loose alpha/dtheta, using independently derived mass sidebands.
+    an_use: AN floor values are posthoc comparison targets only.
+    overfit_risk: medium
+    next_action: Validate floor stability under sideband and background-proxy variations.
+
+  - id: alpha_dtheta_topology
+    group: candidate
+    item: Dalpha and Ddtheta pointing-angle cuts
+    status: partially_independent
+    current_definition: Exact AN Dalpha/Ddtheta rows are accepted by a predeclared signal-efficient, background-stable pointing plateau in all six bins using independently derived sidebands and floors; an AN-free representative table is also emitted but does not match the AN row in five bins.
+    a_priori_basis: After deriving sidebands and vertex-quality floors, require high MC signal retention, high joint score in data-sideband and nonmatched-MC background scans, and no statistically significant background increase; choose optional representative rows from the accepted plateau without AN values.
+    an_use: AN exact pointing values are posthoc validation targets and optional nominal closure points, not inputs to the plateau rule or representative-row rule.
+    overfit_risk: medium
+    next_action: Run final mass-fit closure for the AN-free representative rows versus the AN rows; freeze a nominal tie-break before yield extraction.
+
+  - id: rectangular_vs_bdt_choice
+    group: candidate
+    item: rectangular topology cuts instead of BDT
+    status: partially_independent
+    current_definition: Rectangular cuts are current nominal; BDT not implemented as nominal.
+    a_priori_basis: Rectangular cuts are transparent and easier to validate against mass-shape bias and bin-wise efficiency.
+    an_use: AN states BDT was not used nominally due background-training/data-MC concerns.
+    overfit_risk: medium
+    next_action: Implement BDT as cross-check only, with overtraining and mass-shape-bias validation.
+
+  - id: trigger_selection
+    group: trigger
+    item: UPC trigger paths and pT-bin trigger mapping
+    status: an_specification
+    current_definition: Trigger choices are currently AN/TWiki-driven.
+    a_priori_basis: Use unprescaled or well-calibrated UPC paths with efficiency plateau in each analysis bin.
+    an_use: Current mapping comes from AN and needs exact clarification.
+    overfit_risk: high
+    next_action: Build trigger dictionary and derive usable trigger/bin map from HLT menus, prescales, and efficiency curves.
+
+  - id: final_mass_fit_model
+    group: yield
+    item: signal/background mass fit model
+    status: an_specification
+    current_definition: Existing mass-peak checks use simple diagnostic fits; final AN model not independently rebuilt.
+    a_priori_basis: Choose signal resolution from MC/data control and background model by sideband goodness-of-fit, with alternatives as systematics.
+    an_use: Final model choices remain AN-defined.
+    overfit_risk: high
+    next_action: Build blinded model-selection and alternative-fit protocol before final yields.

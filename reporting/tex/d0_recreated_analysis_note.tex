@@ -1,0 +1,1333 @@
+\documentclass[11pt]{article}
+\usepackage[margin=0.75in]{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\hypersetup{colorlinks=true, linkcolor=blue, urlcolor=blue}
+\title{Recreated Draft of the \(D^0\) UPC Analysis Note}
+\author{Codex-generated reproduction scaffold}
+\date{2026-06-22 22:16:41 UTC}
+\begin{document}
+\maketitle
+\section*{Scope and Rule}
+This document is an AN-shaped reconstruction draft assembled only from current reproduced artifacts and durable logs. The original AN is used as a section and target scaffold; original prose and unsupported final numbers are not copied. Sections marked \textbf{missing} or \textbf{partial} are intentionally not presented as reproduced results.
+\section*{Coverage Summary}
+\begin{center}
+\begin{tabular}{lll p{0.48\textwidth}}
+\toprule
+Section & Status & Title & Current meaning \\
+\midrule
+1 & partial & Introduction & Some ingredients or validation artifacts exist. \\
+2 & partial & Datasets & Some ingredients or validation artifacts exist. \\
+3 & strong partial & Monte Carlo Samples & Core reproduced plots/checks exist, but final AN tables are incomplete. \\
+4 & partial & Trigger Selection & Some ingredients or validation artifacts exist. \\
+5 & strong partial & Offline Event Selection & Core reproduced plots/checks exist, but final AN tables are incomplete. \\
+6 & partial & Event Selection Efficiencies & Some ingredients or validation artifacts exist. \\
+7 & strong partial & D-Meson Selection and Signal Extraction & Core reproduced plots/checks exist, but final AN tables are incomplete. \\
+8 & partial & D-Meson Efficiency & Some ingredients or validation artifacts exist. \\
+9 & partial & MC Reweighting & Some ingredients or validation artifacts exist. \\
+10 & partial scaffold & Cross Section &  \\
+11 & partial & Systematic Uncertainties & Some ingredients or validation artifacts exist. \\
+12 & partial scaffold & Results &  \\
+13-14 & partial scaffold & FONLL Predictions and Comparison &  \\
+15 & partial & Conclusions & Some ingredients or validation artifacts exist. \\
+Appendices & partial & Provenance and Operational Details & Some ingredients or validation artifacts exist. \\
+\bottomrule
+\end{tabular}
+\end{center}
+\section*{1. Introduction}
+\textbf{Status:} partial\\
+\textbf{Purpose in AN:} Define the UPC D0 measurement, the 0nXn topology, and the reproduction standard.
+\paragraph{Reproduced or available now.}
+\begin{itemize}
+\item Current draft states the reproduction policy: AN outputs are validation references, not nominal inputs.
+\item Current data chain starts from 2023 MINIAOD, recreates minimal forests, selected skims, and mass spectra.
+\end{itemize}
+\paragraph{Still missing or not final.}
+\begin{itemize}
+\item Final physics narrative should wait for full cross sections and systematic uncertainties.
+\end{itemize}
+\section*{2. Datasets}
+\textbf{Status:} partial\\
+\textbf{Purpose in AN:} Record data, control samples, luminosity inputs, run ranges, and existing validation artifacts.
+\paragraph{Reproduced or available now.}
+\begin{itemize}
+\item Dataset registry includes 2023 HIForward MINIAOD, Twiki forests, D0 reference skims, EmptyBX, ZeroBias, Golden JSON, and 98 recreated forest files.
+\item The 98-forest medium sample is documented with file manifests and selected-skim outputs.
+\end{itemize}
+\paragraph{Still missing or not final.}
+\begin{itemize}
+\item Full run/lumisection and luminosity tables have not yet been regenerated into AN-style tables.
+\item The current medium sample is HIForward0-scale, not the full final dataset.
+\end{itemize}
+\paragraph{Representative tables.}
+\paragraph{Source table.} \texttt{support/data/miniaod\_chain/produced\_skim\_d0\_peak\_manifest.txt}
+\section*{3. Monte Carlo Samples}
+\textbf{Status:} strong partial\\
+\textbf{Purpose in AN:} Document prompt/nonprompt photonuclear D0 MC, forced D0->Kpi decays, and generator provenance.
+\paragraph{Reproduced or available now.}
+\begin{itemize}
+\item Official prompt D0 MC paths, generator fragments, filter efficiency records, and limitations are recorded in the registry.
+\item Prompt MC is used for topology and daughter-track signal-efficiency scans.
+\item A prompt-MC process-ID and generated-D0 kinematic proxy bundle is now produced from the official flat MC file.
+\end{itemize}
+\paragraph{Still missing or not final.}
+\begin{itemize}
+\item Full prompt/nonprompt/direct/resolved MC production tables and pThat stitching closure are not fully rebuilt.
+\item ZDC response in the available prompt MC is not sufficient for deriving ZDC cuts.
+\end{itemize}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/missing\_an\_mc\_proxy/mc\_process\_id\_distribution.png}
+\par\smallskip
+\small\textbf{Figure:} PYTHIA ProcessID distribution from the official prompt D0 MC flat tree.\label{fig:mc-process-id}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/missing\_an\_mc\_proxy/mc\_gen\_d0\_pt\_y\_map.png}
+\par\smallskip
+\small\textbf{Figure:} Generated D0 pT and |y| occupancy in the official prompt MC proxy scan.\label{fig:mc-gen-map}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/missing\_an\_mc\_proxy/mc\_gen\_vs\_reco\_d0\_pt.png}
+\par\smallskip
+\small\textbf{Figure:} Generated and truth-matched reconstructed D0 pT shapes in the prompt MC proxy scan.\label{fig:mc-gen-reco-pt}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/missing\_an\_mc\_proxy/mc\_gen\_vs\_reco\_d0\_y.png}
+\par\smallskip
+\small\textbf{Figure:} Generated and truth-matched reconstructed D0 rapidity shapes in the prompt MC proxy scan.\label{fig:mc-gen-reco-y}
+\end{center}
+\paragraph{Representative tables.}
+\paragraph{Source table.} \texttt{support/data/mc\_sample\_tables/official\_mc\_sample\_table.tsv}
+\begin{center}\scriptsize
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+flavor & mcm\_request & status & dataset\_name & cmssw\_release \\ \hline
+prompt & HIN-HINPbPbWinter24UPCGS-00001 & done & prompt-GNucleusToD0-PhotonBeamA\_Bin-Pthat0\_Fil-Kpi\_UPC\_5p36TeV\_pythia8-evtgen & CMSSW\_14\_1\_7 \\ \hline
+nonprompt & HIN-HINPbPbWinter24UPCGS-00003 & done & nonprompt-GNucleusToD0-PhotonBeamA\_Bin-Pthat0\_Fil-Kpi\_UPC\_5p36TeV\_pythia8-evtgen & CMSSW\_14\_1\_7 \\ \hline
+\end{tabular}
+\end{center}
+\paragraph{Source table.} \texttt{support/data/missing\_an\_mc\_proxy/mc\_proxy\_summary.tsv}
+\begin{center}\scriptsize
+\begin{tabular}{|l|l|}
+\hline
+metric & value \\ \hline
+mc\_events\_scanned & 12000000 \\ \hline
+data\_selected\_candidates & 3143 \\ \hline
+gen\_bin\_entries & 3.19723e+06 \\ \hline
+truth\_reco\_bin\_entries & 361820 \\ \hline
+note & proxy plots use official prompt MC plus recreated 98-forest selected data; not final corre \\ \hline
+\end{tabular}
+\end{center}
+\section*{4. Trigger Selection}
+\textbf{Status:} partial\\
+\textbf{Purpose in AN:} Apply trigger path definitions and derive trigger-efficiency corrections.
+\paragraph{Reproduced or available now.}
+\begin{itemize}
+\item Trigger path roles and AN ambiguities are listed in the roadmap.
+\item Official-reference trigger-bit occupancy and candidate-level trigger-efficiency proxy maps are generated from official/pre-forested trees when the official proxy bundle is present.
+\end{itemize}
+\paragraph{Still missing or not final.}
+\begin{itemize}
+\item Trigger menu snapshots, prescale tables, era handling, and final reciprocal-efficiency weights have not yet been regenerated from the recreated data.
+\item The current trigger plots are proxies from official/pre-forested inputs, not final trigger corrections.
+\end{itemize}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/missing\_an\_official\_proxy/trigger\_occupancy\_data.png}
+\par\smallskip
+\small\textbf{Figure:} Trigger and filter-bit occupancy in the official 2023 reduced data tree.\label{fig:official-trigger-occupancy-data}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/missing\_an\_official\_proxy/trigger\_occupancy\_prompt\_mc.png}
+\par\smallskip
+\small\textbf{Figure:} Trigger-bit occupancy in the official prompt D0 MC tree.\label{fig:official-trigger-occupancy-mc}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/missing\_an\_official\_proxy/trigger\_efficiency\_proxy\_data\_zdcor.png}
+\par\smallskip
+\small\textbf{Figure:} Candidate-level L1 ZDCOR bit-fraction proxy from the official 2023 reduced data tree.\label{fig:official-trigger-eff-data-zdcor}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/missing\_an\_official\_proxy/trigger\_efficiency\_proxy\_data\_zdcxorjet8.png}
+\par\smallskip
+\small\textbf{Figure:} Candidate-level L1 ZDCXOR+Jet8 bit-fraction proxy from the official 2023 reduced data tree.\label{fig:official-trigger-eff-data-xor8}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/missing\_an\_official\_proxy/trigger\_correction\_proxy\_data\_zdcxorjet8.png}
+\par\smallskip
+\small\textbf{Figure:} Reciprocal data bit-fraction proxy for L1 ZDCXOR+Jet8.\label{fig:official-trigger-corr-data-xor8}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/missing\_an\_official\_proxy/trigger\_efficiency\_proxy\_zdcxorjet8.png}
+\par\smallskip
+\small\textbf{Figure:} Prompt-MC trigger-bit availability diagnostic; zero entries indicate the flat MC tree does not currently provide usable trigger emulation.\label{fig:official-trigger-mc-availability}
+\end{center}
+\paragraph{Representative tables.}
+\paragraph{Source table.} \texttt{support/data/missing\_an\_official\_proxy/trigger\_occupancy\_data.tsv}
+\begin{center}\scriptsize
+\begin{tabular}{|l|l|l|l|}
+\hline
+bit & fraction & count\_estimate & scanned\_events \\ \hline
+all & 1 & 2e+07 & 20000000 \\ \hline
+isL1ZDCOr & 1 & 2e+07 & 20000000 \\ \hline
+isL1ZDCXORJet8 & 0.269065 & 5.3813e+06 & 20000000 \\ \hline
+isL1ZDCXORJet12 & 0 & 0 & 20000000 \\ \hline
+isL1ZDCXORJet16 & 0 & 0 & 20000000 \\ \hline
+isZeroBias & 0 & 0 & 20000000 \\ \hline
+selectedBkgFilter & 0.99466 & 1.98932e+07 & 20000000 \\ \hline
+selectedVtxFilter & 0.998366 & 1.99673e+07 & 20000000 \\ \hline
+\end{tabular}
+\end{center}
+\paragraph{Source table.} \texttt{support/data/missing\_an\_official\_proxy/trigger\_efficiency\_proxy\_data.tsv}
+\begin{center}\scriptsize
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+bin & denominator & isL1ZDCOr & isL1ZDCXORJet8 & corr\_xorjet8 \\ \hline
+absy0to1\_pt2to5 & 25231 & 1 & 0.513971 & 1.94564 \\ \hline
+absy0to1\_pt5to8 & 913 & 1 & 0.539978 & 1.85193 \\ \hline
+absy0to1\_pt8to12 & 193 & 1 & 0.642487 & 1.55645 \\ \hline
+absy1to2\_pt2to5 & 19148 & 1 & 0.457802 & 2.18435 \\ \hline
+absy1to2\_pt5to8 & 842 & 1 & 0.476247 & 2.09975 \\ \hline
+absy1to2\_pt8to12 & 220 & 1 & 0.568182 & 1.76 \\ \hline
+\end{tabular}
+\end{center}
+\paragraph{Source table.} \texttt{support/data/missing\_an\_official\_proxy/trigger\_efficiency\_proxy.tsv}
+\begin{center}\scriptsize
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+bin & denominator & isL1ZDCOr & isL1ZDCXORJet8 & isL1ZDCXORJet12 \\ \hline
+absy0to1\_pt2to5 & 124071 & 0 & 0 & 0 \\ \hline
+absy0to1\_pt5to8 & 22382 & 0 & 0 & 0 \\ \hline
+absy0to1\_pt8to12 & 6240 & 0 & 0 & 0 \\ \hline
+absy1to2\_pt2to5 & 91573 & 0 & 0 & 0 \\ \hline
+absy1to2\_pt5to8 & 15340 & 0 & 0 & 0 \\ \hline
+absy1to2\_pt8to12 & 3942 & 0 & 0 & 0 \\ \hline
+\end{tabular}
+\end{center}
+\section*{5. Offline Event Selection}
+\textbf{Status:} strong partial\\
+\textbf{Purpose in AN:} Recreate event-level UPC selection: PV/MET filters, ZDC 0nXn selection, and HF rapidity gap.
+\paragraph{Reproduced or available now.}
+\begin{itemize}
+\item Nominal ZDC selection now follows the AN calibrated offline recipe: ZDCsignal = HADsum + 0.1 EMsum, with thresholds plus > 1100 GeV and minus > 1000 GeV.
+\item The 0nXn class is implemented as an XOR: plus-side Xn with minus-side 0n, or minus-side Xn with plus-side 0n.
+\item EmptyBX events validate the 0n-side noise tail, while fitted 1n/2n/3n ZDC spectra validate the Xn-side efficiency.
+\item The EM-pileup survival probability is treated as a later correction/uncertainty, not as part of the raw XOR cut.
+\item HF gap thresholds are derived with low-track pass and high-track leakage checks, with MC used only where valid.
+\item Event cutflow exists for the two-file CRAB smoke and for the 98-forest selected skim.
+\item AN-proxy event plots are generated from the reproduced 98-forest Section 5 selected event tree.
+\end{itemize}
+\paragraph{Still missing or not final.}
+\begin{itemize}
+\item Full AN event efficiency tables, final ZDC Xn integration, 0n fake-rate accounting, and EM-pileup correction tables still need a full-statistics pass.
+\end{itemize}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/zdc\_1n\_thresholds/zdc\_plus\_1n\_threshold.png}
+\par\smallskip
+\small\textbf{Figure:} Full-stat TWiki official reduced-tree plus-side ZDC one-neutron threshold validation against the AN calibrated threshold.\label{fig:zdc-plus-latest}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/zdc\_1n\_thresholds/zdc\_minus\_1n\_threshold.png}
+\par\smallskip
+\small\textbf{Figure:} Full-stat TWiki official reduced-tree minus-side ZDC one-neutron threshold validation against the AN calibrated threshold.\label{fig:zdc-minus-latest}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/preflight\_medium\_scale/zdc\_plus\_1n\_threshold.png}
+\par\smallskip
+\small\textbf{Figure:} Data/EmptyBX plus-side ZDC one-neutron threshold validation.\label{fig:zdc-plus}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/preflight\_medium\_scale/zdc\_minus\_1n\_threshold.png}
+\par\smallskip
+\small\textbf{Figure:} Data/EmptyBX minus-side ZDC one-neutron threshold validation.\label{fig:zdc-minus}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/zdc\_multipeak/zdc\_plus\_multipeak\_fits.png}
+\par\smallskip
+\small\textbf{Figure:} TWiki official reduced-tree ZDC-plus 1n/2n/3n peak-fit proxy; used for AN-shape coverage, not final ZDC calibration.\label{fig:zdc-plus-multipeak}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/zdc\_multipeak/zdc\_minus\_multipeak\_fits.png}
+\par\smallskip
+\small\textbf{Figure:} TWiki official reduced-tree ZDC-minus 1n/2n/3n peak-fit proxy; used for AN-shape coverage, not final ZDC calibration.\label{fig:zdc-minus-multipeak}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/preflight\_medium\_scale/zdc\_scale\_scatter.png}
+\par\smallskip
+\small\textbf{Figure:} Same-event recreated/offical ZDC scale closure check used to validate the 2023 ZDC backport.\label{fig:zdc-scale-closure}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/hf\_gap\_derivation/hf\_plus\_gap\_distributions.png}
+\par\smallskip
+\small\textbf{Figure:} Full-stat HF-plus gap-side Emax distributions for MC, data controls, and EmptyBX.\label{fig:hf-plus-dist-latest}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/hf\_gap\_derivation/hf\_minus\_gap\_distributions.png}
+\par\smallskip
+\small\textbf{Figure:} Full-stat HF-minus gap-side Emax distributions for MC, data controls, and EmptyBX.\label{fig:hf-minus-dist-latest}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/hf\_gap\_derivation/hf\_plus\_threshold\_efficiencies.png}
+\par\smallskip
+\small\textbf{Figure:} Full-stat HF-plus threshold efficiency and leakage scan.\label{fig:hf-plus-latest}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/hf\_gap\_derivation/hf\_minus\_threshold\_efficiencies.png}
+\par\smallskip
+\small\textbf{Figure:} Full-stat HF-minus threshold efficiency and leakage scan.\label{fig:hf-minus-latest}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/an\_proxy\_plots/event\_cutflow\_section5.png}
+\par\smallskip
+\small\textbf{Figure:} Section 5 event cutflow from the reproduced 98-forest selected event output.\label{fig:proxy-event-cutflow}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/an\_proxy\_plots/pv\_z\_before\_cut.png}
+\par\smallskip
+\small\textbf{Figure:} Primary-vertex z distribution before the vertex-z requirement.\label{fig:proxy-pvz}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/an\_proxy\_plots/vertex\_multiplicity\_before\_cut.png}
+\par\smallskip
+\small\textbf{Figure:} Vertex multiplicity before the nVtx requirement.\label{fig:proxy-nvtx}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/an\_proxy\_plots/zdc\_plus\_minus\_correlation.png}
+\par\smallskip
+\small\textbf{Figure:} Recreated ZDC plus/minus correlation before the 0nXn XOR requirement.\label{fig:proxy-zdc-corr}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/an\_proxy\_plots/hf\_gap\_side\_emax\_before\_gap.png}
+\par\smallskip
+\small\textbf{Figure:} HF gap-side Emax distribution before applying the rapidity-gap cut.\label{fig:proxy-hf-gap}
+\end{center}
+\paragraph{Representative tables.}
+\paragraph{Source table.} \texttt{support/data/zdc\_1n\_thresholds/zdc\_1n\_threshold\_candidates.tsv}
+\begin{center}\scriptsize
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+side & method & threshold & rounded100 & nSigmaBelowMean \\ \hline
+plus & nominal\_AN & 1100.000000 & 1100.000000 & 3.194453 \\ \hline
+plus & mu\_minus\_1sigma & 1964.462908 & 2000.000000 & 1.000000 \\ \hline
+plus & mu\_minus\_1p8sigma & 1649.318220 & 1600.000000 & 1.800000 \\ \hline
+plus & mu\_minus\_2sigma & 1570.532048 & 1600.000000 & 2.000000 \\ \hline
+plus & mu\_minus\_2p2sigma & 1491.745875 & 1500.000000 & 2.200000 \\ \hline
+plus & gaussian\_height\_20pct & 1651.633518 & 1700.000000 & 1.794123 \\ \hline
+plus & gaussian\_height\_10pct & 1513.031525 & 1500.000000 & 2.145966 \\ \hline
+plus & data\_rising\_edge\_20pct & nan & nan & nan \\ \hline
+\end{tabular}
+\end{center}
+\paragraph{Source table.} \texttt{support/data/zdc\_1n\_thresholds/zdc\_1n\_fit\_params.tsv}
+\begin{center}\scriptsize
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+side & mean & sigma & seed & amplitude \\ \hline
+plus & 2358.393769 & 393.930861 & 2325.000000 & 48136.153240 \\ \hline
+minus & 2586.423659 & 460.819934 & 2525.000000 & 32258.633247 \\ \hline
+\end{tabular}
+\end{center}
+\paragraph{Source table.} \texttt{support/data/preflight\_medium\_scale/zdc\_1n\_threshold\_candidates.tsv}
+\begin{center}\scriptsize
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+side & method & threshold & rounded100 & nSigmaBelowMean \\ \hline
+plus & nominal\_AN & 1100.000000 & 1100.000000 & 2.800242 \\ \hline
+plus & mu\_minus\_1sigma & 1950.839585 & 2000.000000 & 1.000000 \\ \hline
+plus & mu\_minus\_1p8sigma & 1572.739530 & 1600.000000 & 1.800000 \\ \hline
+plus & mu\_minus\_2sigma & 1478.214516 & 1500.000000 & 2.000000 \\ \hline
+plus & mu\_minus\_2p2sigma & 1383.689503 & 1400.000000 & 2.200000 \\ \hline
+plus & gaussian\_height\_20pct & 1575.517347 & 1600.000000 & 1.794123 \\ \hline
+plus & gaussian\_height\_10pct & 1409.227313 & 1400.000000 & 2.145966 \\ \hline
+plus & data\_rising\_edge\_20pct & 1525.000000 & 1500.000000 & 1.901009 \\ \hline
+\end{tabular}
+\end{center}
+\paragraph{Source table.} \texttt{support/data/preflight\_medium\_scale/zdc\_1n\_fit\_params.tsv}
+\begin{center}\scriptsize
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+side & mean & sigma & seed & amplitude \\ \hline
+plus & 2423.464654 & 472.625069 & 2425.000000 & 1591.653108 \\ \hline
+minus & 2646.168426 & 713.538798 & 2725.000000 & 1370.858526 \\ \hline
+\end{tabular}
+\end{center}
+\section*{6. Event Selection Efficiencies}
+\textbf{Status:} partial\\
+\textbf{Purpose in AN:} Convert event-level selection into efficiency corrections in D0 kinematic bins.
+\paragraph{Reproduced or available now.}
+\begin{itemize}
+\item ZDC/HF selection rules and medium-scale preflight checks are available.
+\end{itemize}
+\paragraph{Still missing or not final.}
+\begin{itemize}
+\item Bin-by-bin event-selection efficiency maps have not been fully regenerated.
+\item Trigger/event efficiency separation remains to be finalized.
+\end{itemize}
+\section*{7. D-Meson Selection and Signal Extraction}
+\textbf{Status:} strong partial\\
+\textbf{Purpose in AN:} Select D0 candidates, justify topology cuts, and extract raw yields from Kpi invariant-mass spectra.
+\paragraph{Reproduced or available now.}
+\begin{itemize}
+\item Dfinder ntDkpi branch is reproduced through minimal foresting and selected skims.
+\item Daughter-track, sideband, topology floor, pointing, and BDT checks are documented with scans.
+\item 98-forest selected skim reaches the D0 mass-peak plotting stage.
+\item AN-proxy candidate plots and diagnostic mass fits are generated from the reproduced 98-forest Section 7 selected candidate output.
+\item The completed gap-push topology scans independently rederive floor values in 6/6 bins and accept the AN pointing rows in 6/6 bins under a predeclared plateau rule.
+\item A raw-yield fit QA scaffold checks the current diagnostic mass-fit means, widths, chi2/ndf, and raw yields by bin.
+\end{itemize}
+\paragraph{Still missing or not final.}
+\begin{itemize}
+\item Final AN-style raw-yield fits, pull plots, reflection constraints, and full bin tables are not complete; the current fit panels are diagnostic, and one low-stat bin has a pathological unconstrained fit.
+\end{itemize}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/miniaod\_chain/d0\_mass\_produced\_skim\_selected.png}
+\par\smallskip
+\small\textbf{Figure:} D0 mass spectrum from the reproduced selected skim.\label{fig:d0-mass}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/miniaod\_chain/d0\_mass\_produced\_skim\_pt\_y\_grid.png}
+\par\smallskip
+\small\textbf{Figure:} D0 mass spectra in pT and rapidity bins.\label{fig:d0-grid}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/an\_proxy\_plots/d\_candidate\_cutflow\_section7.png}
+\par\smallskip
+\small\textbf{Figure:} Section 7 D-candidate cutflow from the reproduced selected candidate output.\label{fig:proxy-d-cutflow}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/an\_proxy\_plots/d\_mass\_before\_d\_cuts.png}
+\par\smallskip
+\small\textbf{Figure:} Kpi invariant-mass distribution before final D-candidate cuts.\label{fig:proxy-mass-before}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/an\_proxy\_plots/d\_mass\_selected\_recreated.png}
+\par\smallskip
+\small\textbf{Figure:} Selected Kpi invariant-mass distribution from the reproduced workflow.\label{fig:proxy-mass-selected}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/an\_proxy\_plots/mass\_fit\_all\_selected.png}
+\par\smallskip
+\small\textbf{Figure:} Diagnostic Gaussian-plus-linear fit to all selected D0 candidates.\label{fig:proxy-mass-fit-all}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/an\_proxy\_plots/mass\_fit\_grid\_selected.png}
+\par\smallskip
+\small\textbf{Figure:} Constrained diagnostic selected-candidate mass fits in pT and |y| bins; low-stat bins are not forced to fit.\label{fig:proxy-mass-fit-grid}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/an\_proxy\_plots/mass\_fit\_pull\_grid\_selected.png}
+\par\smallskip
+\small\textbf{Figure:} Pull distributions for the constrained diagnostic selected-candidate mass fits.\label{fig:proxy-mass-fit-pulls}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/an\_proxy\_plots/daughter1\_pt\_before\_cut.png}
+\par\smallskip
+\small\textbf{Figure:} First daughter-track pT distribution before the daughter-track pT cut.\label{fig:proxy-dtrk1-pt}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/an\_proxy\_plots/daughter2\_pt\_before\_cut.png}
+\par\smallskip
+\small\textbf{Figure:} Second daughter-track pT distribution before the daughter-track pT cut.\label{fig:proxy-dtrk2-pt}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/an\_proxy\_plots/daughter1\_rel\_pt\_err\_before\_cut.png}
+\par\smallskip
+\small\textbf{Figure:} First daughter relative pT uncertainty before the quality cut.\label{fig:proxy-dtrk1-pterr}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/an\_proxy\_plots/daughter2\_rel\_pt\_err\_before\_cut.png}
+\par\smallskip
+\small\textbf{Figure:} Second daughter relative pT uncertainty before the quality cut.\label{fig:proxy-dtrk2-pterr}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/an\_proxy\_plots/d\_pt\_before\_cut.png}
+\par\smallskip
+\small\textbf{Figure:} D0 pT distribution before the analysis pT range cut.\label{fig:proxy-dpt}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/an\_proxy\_plots/d\_y\_before\_cut.png}
+\par\smallskip
+\small\textbf{Figure:} D0 rapidity distribution before the analysis rapidity range cut.\label{fig:proxy-dy}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/topology\_sideband\_independent/sideband\_resolution\_rule.png}
+\par\smallskip
+\small\textbf{Figure:} Topology sideband rule derived from MC mass resolution.\label{fig:sideband-rule}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/topology\_rect\_independent\_sideband/topology\_eff\_vs\_sideband\_grid.png}
+\par\smallskip
+\small\textbf{Figure:} Independent data-sideband topology scan: MC signal efficiency versus data-sideband pass fraction.\label{fig:topology-data-sideband-grid}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/topology\_mc\_background\_independent\_sideband/topology\_eff\_vs\_sideband\_grid.png}
+\par\smallskip
+\small\textbf{Figure:} Independent MC-background topology scan: MC signal efficiency versus nonmatched-MC sideband pass fraction.\label{fig:topology-mc-sideband-grid}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/topological\_floor\_independent\_sideband/floor\_profile\_grid.png}
+\par\smallskip
+\small\textbf{Figure:} Topological floor scan profile.\label{fig:floor}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/topological\_floor\_independent\_sideband/chi2\_floor\_profile\_grid.png}
+\par\smallskip
+\small\textbf{Figure:} Secondary-vertex probability floor profile used in the independent topology-floor justification.\label{fig:chi2-floor}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/topological\_pointing\_independent\_sideband/pointing\_plateau\_grid.png}
+\par\smallskip
+\small\textbf{Figure:} Pointing-cut plateau validation.\label{fig:pointing}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/final\_yield\_fit\_summary/raw\_yield\_fit\_qa\_by\_bin.png}
+\par\smallskip
+\small\textbf{Figure:} Raw Gaussian D0 yield QA by pT and |y| bin.\label{fig:yield-fit-qa}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/final\_yield\_fit\_summary/mass\_mean\_sigma\_qa.png}
+\par\smallskip
+\small\textbf{Figure:} Mass-fit centroid and width QA against the D0 mass reference.\label{fig:mass-mean-sigma-qa}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/final\_yield\_fit\_summary/mass\_fit\_chi2\_qa.png}
+\par\smallskip
+\small\textbf{Figure:} Mass-fit chi2/ndf QA for the diagnostic raw-yield fits.\label{fig:mass-fit-chi2-qa}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/an\_proxy\_plots/topology\_alpha\_grid\_before\_cut.png}
+\par\smallskip
+\small\textbf{Figure:} D-alpha distributions before the pointing-angle cut in pT and |y| bins.\label{fig:proxy-alpha-grid}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/an\_proxy\_plots/topology\_svpv\_sig\_grid\_before\_cut.png}
+\par\smallskip
+\small\textbf{Figure:} 3D decay-length significance distributions before the topological floor cut.\label{fig:proxy-svpv-grid}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/an\_proxy\_plots/topology\_chi2cl\_grid\_before\_cut.png}
+\par\smallskip
+\small\textbf{Figure:} Secondary-vertex fit probability distributions before the topology cut.\label{fig:proxy-chi2cl-grid}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/an\_proxy\_plots/topology\_dtheta\_grid\_before\_cut.png}
+\par\smallskip
+\small\textbf{Figure:} Delta-theta distributions before the angular-consistency cut.\label{fig:proxy-dtheta-grid}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/missing\_an\_mc\_proxy/data\_vs\_mc\_alpha.png}
+\par\smallskip
+\small\textbf{Figure:} Selected-data versus prompt-MC D-alpha shape comparison after the current rectangular topology selection.\label{fig:mc-data-alpha}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/missing\_an\_mc\_proxy/data\_vs\_mc\_svpvSig.png}
+\par\smallskip
+\small\textbf{Figure:} Selected-data versus prompt-MC 3D decay-length-significance shape comparison.\label{fig:mc-data-svpv}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/missing\_an\_mc\_proxy/data\_vs\_mc\_svpvSig2D.png}
+\par\smallskip
+\small\textbf{Figure:} Selected-data versus prompt-MC 2D decay-length-significance shape comparison.\label{fig:mc-data-svpv2d}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/missing\_an\_mc\_proxy/data\_vs\_mc\_chi2cl.png}
+\par\smallskip
+\small\textbf{Figure:} Selected-data versus prompt-MC secondary-vertex fit-probability shape comparison.\label{fig:mc-data-chi2cl}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/missing\_an\_mc\_proxy/data\_vs\_mc\_dtheta.png}
+\par\smallskip
+\small\textbf{Figure:} Selected-data versus prompt-MC angular-consistency shape comparison.\label{fig:mc-data-dtheta}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/missing\_an\_mc\_proxy/data\_vs\_mc\_trk1pt.png}
+\par\smallskip
+\small\textbf{Figure:} Selected-data versus prompt-MC leading-daughter pT shape comparison.\label{fig:mc-data-trk1pt}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/missing\_an\_mc\_proxy/data\_vs\_mc\_trk2pt.png}
+\par\smallskip
+\small\textbf{Figure:} Selected-data versus prompt-MC subleading-daughter pT shape comparison.\label{fig:mc-data-trk2pt}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/missing\_an\_mc\_proxy/data\_vs\_mc\_relpt1.png}
+\par\smallskip
+\small\textbf{Figure:} Selected-data versus prompt-MC leading-daughter relative pT uncertainty comparison.\label{fig:mc-data-relpt1}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/missing\_an\_mc\_proxy/data\_vs\_mc\_relpt2.png}
+\par\smallskip
+\small\textbf{Figure:} Selected-data versus prompt-MC subleading-daughter relative pT uncertainty comparison.\label{fig:mc-data-relpt2}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/bdt\_topology\_98forests/absy0to1\_pt2to5\_bdt\_threshold\_scan.png}
+\par\smallskip
+\small\textbf{Figure:} BDT threshold scan in |y|<1, 2<pT<5.\label{fig:bdt-scan-0-1-2-5}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/bdt\_topology\_98forests/absy0to1\_pt5to8\_bdt\_threshold\_scan.png}
+\par\smallskip
+\small\textbf{Figure:} BDT threshold scan in |y|<1, 5<pT<8.\label{fig:bdt-scan-0-1-5-8}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/bdt\_topology\_98forests/absy0to1\_pt8to12\_bdt\_threshold\_scan.png}
+\par\smallskip
+\small\textbf{Figure:} BDT threshold scan in |y|<1, 8<pT<12.\label{fig:bdt-scan-0-1-8-12}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/bdt\_topology\_98forests/absy1to2\_pt2to5\_bdt\_threshold\_scan.png}
+\par\smallskip
+\small\textbf{Figure:} BDT threshold scan in 1<|y|<2, 2<pT<5.\label{fig:bdt-scan-1-2-2-5}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/bdt\_topology\_98forests/absy1to2\_pt5to8\_bdt\_threshold\_scan.png}
+\par\smallskip
+\small\textbf{Figure:} BDT threshold scan in 1<|y|<2, 5<pT<8.\label{fig:bdt-scan-1-2-5-8}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/bdt\_topology\_98forests/absy1to2\_pt8to12\_bdt\_threshold\_scan.png}
+\par\smallskip
+\small\textbf{Figure:} BDT threshold scan in 1<|y|<2, 8<pT<12.\label{fig:bdt-scan-1-2-8-12}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/bdt\_topology\_98forests/absy0to1\_pt2to5\_bdt\_overtraining.png}
+\par\smallskip
+\small\textbf{Figure:} BDT overtraining check in |y|<1, 2<pT<5.\label{fig:bdt-over-0-1-2-5}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/bdt\_topology\_98forests/absy1to2\_pt2to5\_bdt\_overtraining.png}
+\par\smallskip
+\small\textbf{Figure:} BDT overtraining check in 1<|y|<2, 2<pT<5.\label{fig:bdt-over-1-2-2-5}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/bdt\_topology\_98forests/absy0to1\_pt2to5\_mass\_bdt\_vs\_an.png}
+\par\smallskip
+\small\textbf{Figure:} BDT cross-check against rectangular topology cuts in |y|<1, 2<pT<5.\label{fig:bdt-mass}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/bdt\_topology\_98forests/absy0to1\_pt5to8\_mass\_bdt\_vs\_an.png}
+\par\smallskip
+\small\textbf{Figure:} BDT cross-check against rectangular topology cuts in |y|<1, 5<pT<8.\label{fig:bdt-mass-0-1-5-8}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/bdt\_topology\_98forests/absy0to1\_pt8to12\_mass\_bdt\_vs\_an.png}
+\par\smallskip
+\small\textbf{Figure:} BDT cross-check against rectangular topology cuts in |y|<1, 8<pT<12.\label{fig:bdt-mass-0-1-8-12}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/bdt\_topology\_98forests/absy1to2\_pt2to5\_mass\_bdt\_vs\_an.png}
+\par\smallskip
+\small\textbf{Figure:} BDT cross-check against rectangular topology cuts in 1<|y|<2, 2<pT<5.\label{fig:bdt-mass-1-2-2-5}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/bdt\_topology\_98forests/absy1to2\_pt5to8\_mass\_bdt\_vs\_an.png}
+\par\smallskip
+\small\textbf{Figure:} BDT cross-check against rectangular topology cuts in 1<|y|<2, 5<pT<8.\label{fig:bdt-mass-1-2-5-8}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/bdt\_topology\_98forests/absy1to2\_pt8to12\_mass\_bdt\_vs\_an.png}
+\par\smallskip
+\small\textbf{Figure:} BDT cross-check against rectangular topology cuts in 1<|y|<2, 8<pT<12.\label{fig:bdt-mass-1-2-8-12}
+\end{center}
+\paragraph{Representative tables.}
+\paragraph{Source table.} \texttt{support/data/topology\_sideband\_independent/recommended\_sidebands.tsv}
+\begin{center}\scriptsize
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+id & sigmaSource & maxSigma68 & innerAbsDm & outerAbsDm \\ \hline
+global\_resolution\_rule & max\_over\_bins & 0.023963066 & 0.07 & 0.12 \\ \hline
+\end{tabular}
+\end{center}
+\paragraph{Source table.} \texttt{support/data/topology\_rect\_independent\_sideband/topology\_guided\_an\_reproduction.tsv}
+\begin{center}\scriptsize
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+bin & fixedSvpvSigMin & fixedChi2clMin & nominalAlphaMax & nominalDthetaMax \\ \hline
+absy0to1\_pt2to5 & 2.5 & 0.1 & 0.4 & 0.5 \\ \hline
+absy0to1\_pt5to8 & 3.5 & 0.1 & 0.35 & 0.3 \\ \hline
+absy0to1\_pt8to12 & 3.5 & 0.1 & 0.4 & 0.3 \\ \hline
+absy1to2\_pt2to5 & 2.5 & 0.1 & 0.2 & 0.3 \\ \hline
+absy1to2\_pt5to8 & 3.5 & 0.1 & 0.25 & 0.3 \\ \hline
+absy1to2\_pt8to12 & 3.5 & 0.1 & 0.25 & 0.3 \\ \hline
+\end{tabular}
+\end{center}
+\paragraph{Source table.} \texttt{support/data/topology\_mc\_background\_independent\_sideband/topology\_guided\_an\_reproduction.tsv}
+\begin{center}\scriptsize
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+bin & fixedSvpvSigMin & fixedChi2clMin & nominalAlphaMax & nominalDthetaMax \\ \hline
+absy0to1\_pt2to5 & 2.5 & 0.1 & 0.4 & 0.5 \\ \hline
+absy0to1\_pt5to8 & 3.5 & 0.1 & 0.35 & 0.3 \\ \hline
+absy0to1\_pt8to12 & 3.5 & 0.1 & 0.4 & 0.3 \\ \hline
+absy1to2\_pt2to5 & 2.5 & 0.1 & 0.2 & 0.3 \\ \hline
+absy1to2\_pt5to8 & 3.5 & 0.1 & 0.25 & 0.3 \\ \hline
+absy1to2\_pt8to12 & 3.5 & 0.1 & 0.25 & 0.3 \\ \hline
+\end{tabular}
+\end{center}
+\paragraph{Source table.} \texttt{support/data/topological\_floor\_independent\_sideband/floor\_derivation.tsv}
+\begin{center}\scriptsize
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+bin & derivedSvpvSigMin & derivedChi2clMin & nominalSvpvSigMin & nominalChi2clMin \\ \hline
+absy0to1\_pt2to5 & 2.5 & 0.1 & 2.5 & 0.1 \\ \hline
+absy0to1\_pt5to8 & 3.5 & 0.1 & 3.5 & 0.1 \\ \hline
+absy0to1\_pt8to12 & 3.5 & 0.1 & 3.5 & 0.1 \\ \hline
+absy1to2\_pt2to5 & 2.5 & 0.1 & 2.5 & 0.1 \\ \hline
+absy1to2\_pt5to8 & 3.5 & 0.1 & 3.5 & 0.1 \\ \hline
+absy1to2\_pt8to12 & 3.5 & 0.1 & 3.5 & 0.1 \\ \hline
+\end{tabular}
+\end{center}
+\section*{8. D-Meson Efficiency}
+\textbf{Status:} partial\\
+\textbf{Purpose in AN:} Build acceptance, reconstruction, and selection efficiency maps for D0 candidates.
+\paragraph{Reproduced or available now.}
+\begin{itemize}
+\item Prompt MC signal-efficiency scans are used locally for topology and daughter-track choices.
+\item A prompt-MC reco/gen proxy map is generated from official MC and current rectangular D0 selection.
+\end{itemize}
+\paragraph{Still missing or not final.}
+\begin{itemize}
+\item Full alpha-times-efficiency maps, prompt/nonprompt separation, direct/resolved separation, and final correction tables are not rebuilt.
+\end{itemize}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/missing\_an\_mc\_proxy/mc\_acceptance\_efficiency\_proxy\_map.png}
+\par\smallskip
+\small\textbf{Figure:} Reco/gen D0 efficiency proxy map from official prompt MC after current rectangular D0 selection.\label{fig:mc-eff-proxy}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/missing\_an\_mc\_proxy/mc\_reco\_truth\_d0\_pt\_y\_map.png}
+\par\smallskip
+\small\textbf{Figure:} Truth-matched reconstructed D0 pT and |y| occupancy after current rectangular D0 selection.\label{fig:mc-reco-map}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/missing\_an\_mc\_proxy/data\_vs\_mc\_selected\_d0\_pt.png}
+\par\smallskip
+\small\textbf{Figure:} Selected-data and truth-matched prompt-MC D0 pT shape comparison.\label{fig:data-mc-dpt}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/missing\_an\_mc\_proxy/data\_vs\_mc\_selected\_d0\_y.png}
+\par\smallskip
+\small\textbf{Figure:} Selected-data and truth-matched prompt-MC D0 rapidity shape comparison.\label{fig:data-mc-dy}
+\end{center}
+\paragraph{Representative tables.}
+\paragraph{Source table.} \texttt{support/data/missing\_an\_mc\_proxy/mc\_proxy\_summary.tsv}
+\begin{center}\scriptsize
+\begin{tabular}{|l|l|}
+\hline
+metric & value \\ \hline
+mc\_events\_scanned & 12000000 \\ \hline
+data\_selected\_candidates & 3143 \\ \hline
+gen\_bin\_entries & 3.19723e+06 \\ \hline
+truth\_reco\_bin\_entries & 361820 \\ \hline
+note & proxy plots use official prompt MC plus recreated 98-forest selected data; not final corre \\ \hline
+\end{tabular}
+\end{center}
+\section*{9. MC Reweighting}
+\textbf{Status:} partial\\
+\textbf{Purpose in AN:} Derive and apply generator-level D0 kinematic reweighting.
+\paragraph{Reproduced or available now.}
+\begin{itemize}
+\item A selected-data/prompt-MC shape-ratio proxy weight map is produced as a diagnostic.
+\item The prompt-MC D0 pT and rapidity distributions are plotted before and after applying the proxy weight map.
+\end{itemize}
+\paragraph{Still missing or not final.}
+\begin{itemize}
+\item FONLL/PYTHIA weight maps and reweighted efficiency closure plots are not yet reproduced.
+\end{itemize}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/missing\_an\_mc\_proxy/data\_over\_mc\_reweighting\_proxy\_map.png}
+\par\smallskip
+\small\textbf{Figure:} Selected-data over prompt-MC D0 shape-ratio proxy weights in pT and |y| bins.\label{fig:proxy-reweight-map}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/missing\_an\_mc\_proxy/mc\_pt\_before\_after\_proxy\_reweight.png}
+\par\smallskip
+\small\textbf{Figure:} Prompt-MC selected D0 pT distribution before and after proxy reweighting.\label{fig:proxy-reweight-pt}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/missing\_an\_mc\_proxy/mc\_y\_before\_after\_proxy\_reweight.png}
+\par\smallskip
+\small\textbf{Figure:} Prompt-MC selected D0 rapidity distribution before and after proxy reweighting.\label{fig:proxy-reweight-y}
+\end{center}
+\paragraph{Representative tables.}
+\paragraph{Source table.} \texttt{support/data/missing\_an\_mc\_proxy/mc\_proxy\_summary.tsv}
+\begin{center}\scriptsize
+\begin{tabular}{|l|l|}
+\hline
+metric & value \\ \hline
+mc\_events\_scanned & 12000000 \\ \hline
+data\_selected\_candidates & 3143 \\ \hline
+gen\_bin\_entries & 3.19723e+06 \\ \hline
+truth\_reco\_bin\_entries & 361820 \\ \hline
+note & proxy plots use official prompt MC plus recreated 98-forest selected data; not final corre \\ \hline
+\end{tabular}
+\end{center}
+\section*{10. Cross Section}
+\textbf{Status:} partial scaffold\\
+\textbf{Purpose in AN:} Combine raw yields, luminosity, bin widths, branching fraction, prescales, efficiencies, and pileup corrections.
+\paragraph{Reproduced or available now.}
+\begin{itemize}
+\item The selected-skim mass spectra and bin counts exist as raw ingredients.
+\item A normalization scaffold produces raw-yield proxy plots and a template config for the final corrected-yield pipeline.
+\end{itemize}
+\paragraph{Still missing or not final.}
+\begin{itemize}
+\item Final cross-section tables are not yet defensible because trigger, event, D-efficiency, luminosity, EMD, and systematic inputs are incomplete.
+\item The scaffold plots are explicitly uncorrected; all missing frozen inputs are listed in the input-request table.
+\end{itemize}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/normalization\_scaffold/raw\_yield\_proxy\_by\_bin.png}
+\par\smallskip
+\small\textbf{Figure:} Raw Gaussian fitted D0 yield by pT and |y| bin from the current diagnostic mass fits.\label{fig:raw-yield-proxy}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/normalization\_scaffold/proxy\_cross\_section\_density\_by\_bin.png}
+\par\smallskip
+\small\textbf{Figure:} Uncorrected raw-yield density by bin; this is a cross-section-pipeline placeholder, not a physics cross section.\label{fig:proxy-xs-density}
+\end{center}
+\paragraph{Representative tables.}
+\paragraph{Source table.} \texttt{support/data/miniaod\_chain/pt\_y\_bin\_counts.csv}
+\begin{center}\scriptsize
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+pt\_low & pt\_high & y\_low & y\_high & entries \\ \hline
+2 & 5 & -2 & -1 & 435 \\ \hline
+2 & 5 & -1 & 0 & 395 \\ \hline
+2 & 5 & 0 & 1 & 471 \\ \hline
+2 & 5 & 1 & 2 & 412 \\ \hline
+5 & 8 & -2 & -1 & 136 \\ \hline
+5 & 8 & -1 & 0 & 179 \\ \hline
+5 & 8 & 0 & 1 & 190 \\ \hline
+5 & 8 & 1 & 2 & 134 \\ \hline
+\end{tabular}
+\end{center}
+\paragraph{Source table.} \texttt{support/data/normalization\_scaffold/raw\_yield\_proxy.tsv}
+\begin{center}\scriptsize
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+bin & pretty\_bin & entries & raw\_gaussian\_yield & mean \\ \hline
+absy0to1\_pt2to5 & |y| 0-1, pT 2-5 & 1025.0 & 75.9086 & 1.86508 \\ \hline
+absy0to1\_pt5to8 & |y| 0-1, pT 5-8 & 431.0 & 92.3565 & 1.86155 \\ \hline
+absy0to1\_pt8to12 & |y| 0-1, pT 8-12 & 233.0 & 27.7116 & 1.86266 \\ \hline
+absy1to2\_pt2to5 & |y| 1-2, pT 2-5 & 995.0 & 44.9607 & 1.8581 \\ \hline
+absy1to2\_pt5to8 & |y| 1-2, pT 5-8 & 314.0 & 23.4567 & 1.85673 \\ \hline
+absy1to2\_pt8to12 & |y| 1-2, pT 8-12 & 145.0 & 19.5399 & 1.85243 \\ \hline
+\end{tabular}
+\end{center}
+\paragraph{Source table.} \texttt{support/data/normalization\_scaffold/external\_inputs\_needed.tsv}
+\begin{center}\scriptsize
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+id & status & owner & why & acceptable\_proxy \\ \hline
+final\_run\_lumi\_table & needed & analysis/lumi & Normalizes raw yields to differential cross sections. & None for final result; current scaffold can only plot raw yields. \\ \hline
+trigger\_menu\_prescales\_eras & needed & trigger & Defines trigger paths, prescale weighting, and era-dependent efficiency maps. & Candidate-level trigger bit fractions from the TWiki reduced tree. \\ \hline
+final\_efficiency\_maps & needed & mc/corrections & Converts fitted yields into acceptance/efficiency-corrected yields by pT and y bin. & Prompt-MC reco/gen proxy maps already produced. \\ \hline
+mc\_sample\_registry & needed & mc & Freezes pThat bins, cross sections, filter efficiencies, process IDs, and stitching weight & Stored McM snapshots and official prompt/nonprompt sample table. \\ \hline
+zdc\_calibration\_backport & needed & detector/zdc & Determines final ZDC energy scale, SOI/SOI+1 interpretation, and threshold table. & Data/EmptyBX ZDC-sum fits and threshold scans. \\ \hline
+emd\_and\_branching\_constants & needed & physics/constants & Needed for final gammaN/Ngamma normalization and branching-ratio propagation. & None for final result. \\ \hline
+fonll\_theory\_tables & needed & theory & Needed to reproduce final data/theory comparison figures. & Plotting script can be built once tables exist; no final overlay without theory points. \\ \hline
+\end{tabular}
+\end{center}
+\paragraph{Source table.} \texttt{support/data/normalization\_scaffold/normalization\_config.template.yaml}
+\section*{11. Systematic Uncertainties}
+\textbf{Status:} partial\\
+\textbf{Purpose in AN:} Evaluate luminosity, trigger, event selection, D selection, tracking, fit, branching-ratio, gap-threshold, and prompt/nonprompt uncertainties.
+\paragraph{Reproduced or available now.}
+\begin{itemize}
+\item Several cut-variation and closure studies exist for ZDC, HF, topology sidebands, floors, pointing, and BDT cross-checks.
+\item Official-reference D-selection pass-flag mass-shape variations and DCA prompt-fraction proxy templates are generated when the official proxy bundle is present.
+\end{itemize}
+\paragraph{Still missing or not final.}
+\begin{itemize}
+\item Full systematic table builder and final source-by-source uncertainty matrix remain incomplete.
+\item Official-reference systematic panels are candidate-count/mass-shape proxies and are not final corrected cross-section uncertainties.
+\end{itemize}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/topological\_pointing\_closure/corrected\_yield\_ratio\_grid.png}
+\par\smallskip
+\small\textbf{Figure:} Neighboring pointing-cut corrected-yield closure.\label{fig:pointing-closure}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/topological\_pointing\_closure/mass\_overlay\_grid.png}
+\par\smallskip
+\small\textbf{Figure:} Mass-shape stability under neighboring pointing choices.\label{fig:mass-shape}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/missing\_an\_official\_proxy/systematic\_mass\_variation\_all.png}
+\par\smallskip
+\small\textbf{Figure:} Official-reference D0 mass-shape proxy under D-selection systematic pass-flag variations.\label{fig:official-syst-mass-all}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/missing\_an\_official\_proxy/systematic\_mass\_variation\_pt2to5\_absy0to1.png}
+\par\smallskip
+\small\textbf{Figure:} Official-reference track-pT variation mass-shape proxy in 2<pT<5 and |y|<1.\label{fig:official-syst-trackpt}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/missing\_an\_official\_proxy/systematic\_mass\_variation\_pt8to12\_absy1to2.png}
+\par\smallskip
+\small\textbf{Figure:} Official-reference high-pT topology/fit variation mass-shape proxy in 8<pT<12 and 1<|y|<2.\label{fig:official-syst-highpt}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/missing\_an\_official\_proxy/systematic\_yield\_variation\_proxy.png}
+\par\smallskip
+\small\textbf{Figure:} Candidate-count proxy for D-selection systematic variations.\label{fig:official-syst-yield-proxy}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/missing\_an\_official\_proxy/dca\_template\_all.png}
+\par\smallskip
+\small\textbf{Figure:} DCA-significance templates for an official-reference prompt-fraction proxy.\label{fig:official-dca-template}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/missing\_an\_official\_proxy/prompt\_fraction\_proxy\_by\_bin.png}
+\par\smallskip
+\small\textbf{Figure:} Template-fit prompt-fraction proxy by D0 kinematic bin.\label{fig:official-prompt-fraction-proxy}
+\end{center}
+\paragraph{Representative tables.}
+\paragraph{Source table.} \texttt{support/data/selection\_independence/selection\_independence\_audit.tsv}
+\begin{center}\scriptsize
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+id & group & item & status & overfit\_risk \\ \hline
+physics\_target & scope & UPC PbPb D0 to K pi in 0nXn with rapidity gap & an\_specification & low \\ \hline
+fiducial\_pt\_y\_bins & fiducial & D0 pT and rapidity bins & partially\_independent & medium \\ \hline
+event\_quality\_filters & event & certified run/lumi and standard event-quality filters & partially\_independent & low \\ \hline
+vertex\_count & event & primary-vertex multiplicity & partially\_independent & medium \\ \hline
+zdc\_xor\_topology & event & ZDC 0nXn XOR side definition & partially\_independent & low \\ \hline
+zdc\_1n\_thresholds & event & ZDC one-neutron thresholds & partially\_independent & medium \\ \hline
+hf\_gap\_thresholds & event & HF rapidity-gap thresholds & partially\_independent & medium \\ \hline
+daughter\_track\_acceptance & candidate & daughter track pT, eta, and relative pT uncertainty & partially\_independent & medium \\ \hline
+\end{tabular}
+\end{center}
+\paragraph{Source table.} \texttt{support/data/topological\_pointing\_closure/pointing\_closure\_summary.tsv}
+\begin{center}\scriptsize
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+bin & neighborPointsTested & neighborsPassingCompatibility & maxAbsRawYieldRatioShift & maxAbsCorrectedYieldRatioShift \\ \hline
+absy0to1\_pt2to5 & 7 & 7 & 0.206731 & 0.0983249 \\ \hline
+absy0to1\_pt5to8 & 9 & 9 & 0.0357143 & 0.0280744 \\ \hline
+absy0to1\_pt8to12 & 9 & 9 & 0.0384615 & 0.0378996 \\ \hline
+absy1to2\_pt2to5 & 3 & 3 & 0.00821355 & 0.123272 \\ \hline
+absy1to2\_pt5to8 & 9 & 9 & 0.0588235 & 0.0480161 \\ \hline
+absy1to2\_pt8to12 & 9 & 9 & 0.0606061 & 0.0600086 \\ \hline
+\end{tabular}
+\end{center}
+\paragraph{Source table.} \texttt{support/data/missing\_an\_official\_proxy/systematic\_yield\_variation\_proxy.tsv}
+\begin{center}\scriptsize
+\begin{tabular}{|l|l|l|l|}
+\hline
+bin & variation & mass\_window\_candidates & relative\_to\_nominal \\ \hline
+absy0to1\_pt2to5 & nominal & 3966 & 1 \\ \hline
+absy0to1\_pt5to8 & nominal & 164 & 1 \\ \hline
+absy0to1\_pt8to12 & nominal & 45 & 1 \\ \hline
+absy1to2\_pt2to5 & nominal & 2885 & 1 \\ \hline
+absy1to2\_pt5to8 & nominal & 158 & 1 \\ \hline
+absy1to2\_pt8to12 & nominal & 38 & 1 \\ \hline
+absy0to1\_pt2to5 & loose & 6018 & 1.5174 \\ \hline
+absy0to1\_pt5to8 & loose & 270 & 1.64634 \\ \hline
+\end{tabular}
+\end{center}
+\paragraph{Source table.} \texttt{support/data/missing\_an\_official\_proxy/prompt\_fraction\_proxy\_by\_bin.tsv}
+\begin{center}\scriptsize
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+bin & data\_entries & prompt\_entries & nonprompt\_entries & prompt\_fraction\_proxy \\ \hline
+absy0to1\_pt2to5 & 20196 & 52537 & 896842 & 0.528593 \\ \hline
+absy0to1\_pt5to8 & 616 & 10157 & 155071 & 0.595623 \\ \hline
+absy0to1\_pt8to12 & 147 & 2874 & 41687 & 0.488215 \\ \hline
+absy1to2\_pt2to5 & 14721 & 37432 & 613802 & 0.479053 \\ \hline
+absy1to2\_pt5to8 & 563 & 6951 & 113908 & 0.264674 \\ \hline
+absy1to2\_pt8to12 & 135 & 1818 & 30045 & 0.541782 \\ \hline
+\end{tabular}
+\end{center}
+\section*{12. Results}
+\textbf{Status:} partial scaffold\\
+\textbf{Purpose in AN:} Present final differential cross sections and consistency checks.
+\paragraph{Reproduced or available now.}
+\begin{itemize}
+\item Current reproduced result is a mass peak, not a final corrected measurement.
+\item Raw-yield proxy plots now exist as placeholders for the final result plotting pipeline.
+\end{itemize}
+\paragraph{Still missing or not final.}
+\begin{itemize}
+\item Final cross-section plots, Xn0n/0nXn compatibility, and AN ratio plots are pending corrections and systematics.
+\end{itemize}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/normalization\_scaffold/raw\_yield\_proxy\_by\_bin.png}
+\par\smallskip
+\small\textbf{Figure:} Raw-yield proxy repeated here as the current non-final result placeholder.\label{fig:result-raw-yield-proxy}
+\end{center}
+\paragraph{Representative tables.}
+\paragraph{Source table.} \texttt{support/data/normalization\_scaffold/raw\_yield\_proxy.tsv}
+\begin{center}\scriptsize
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+bin & pretty\_bin & entries & raw\_gaussian\_yield & mean \\ \hline
+absy0to1\_pt2to5 & |y| 0-1, pT 2-5 & 1025.0 & 75.9086 & 1.86508 \\ \hline
+absy0to1\_pt5to8 & |y| 0-1, pT 5-8 & 431.0 & 92.3565 & 1.86155 \\ \hline
+absy0to1\_pt8to12 & |y| 0-1, pT 8-12 & 233.0 & 27.7116 & 1.86266 \\ \hline
+absy1to2\_pt2to5 & |y| 1-2, pT 2-5 & 995.0 & 44.9607 & 1.8581 \\ \hline
+absy1to2\_pt5to8 & |y| 1-2, pT 5-8 & 314.0 & 23.4567 & 1.85673 \\ \hline
+absy1to2\_pt8to12 & |y| 1-2, pT 8-12 & 145.0 & 19.5399 & 1.85243 \\ \hline
+\end{tabular}
+\end{center}
+\paragraph{Source table.} \texttt{support/data/normalization\_scaffold/external\_inputs\_needed.tsv}
+\begin{center}\scriptsize
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+id & status & owner & why & acceptable\_proxy \\ \hline
+final\_run\_lumi\_table & needed & analysis/lumi & Normalizes raw yields to differential cross sections. & None for final result; current scaffold can only plot raw yields. \\ \hline
+trigger\_menu\_prescales\_eras & needed & trigger & Defines trigger paths, prescale weighting, and era-dependent efficiency maps. & Candidate-level trigger bit fractions from the TWiki reduced tree. \\ \hline
+final\_efficiency\_maps & needed & mc/corrections & Converts fitted yields into acceptance/efficiency-corrected yields by pT and y bin. & Prompt-MC reco/gen proxy maps already produced. \\ \hline
+mc\_sample\_registry & needed & mc & Freezes pThat bins, cross sections, filter efficiencies, process IDs, and stitching weight & Stored McM snapshots and official prompt/nonprompt sample table. \\ \hline
+zdc\_calibration\_backport & needed & detector/zdc & Determines final ZDC energy scale, SOI/SOI+1 interpretation, and threshold table. & Data/EmptyBX ZDC-sum fits and threshold scans. \\ \hline
+emd\_and\_branching\_constants & needed & physics/constants & Needed for final gammaN/Ngamma normalization and branching-ratio propagation. & None for final result. \\ \hline
+fonll\_theory\_tables & needed & theory & Needed to reproduce final data/theory comparison figures. & Plotting script can be built once tables exist; no final overlay without theory points. \\ \hline
+\end{tabular}
+\end{center}
+\section*{13-14. FONLL Predictions and Comparison}
+\textbf{Status:} partial scaffold\\
+\textbf{Purpose in AN:} Compare final measurement to perturbative QCD predictions and photonuclear modeling.
+\paragraph{Reproduced or available now.}
+\begin{itemize}
+\item A theory-comparison scaffold now defines the exact frozen inputs needed for the FONLL, EPPS21, CT18, CGC, photon-flux, and H1/ZEUS comparison plots.
+\item The scaffold includes a producer contract and target-to-input mapping, but no final theory curves are generated without frozen tables/configs.
+\end{itemize}
+\paragraph{Still missing or not final.}
+\begin{itemize}
+\item Theory tables, photon-flux/EMD corrections, and data/theory overlays have not been rebuilt.
+\item Required theory and normalization inputs are listed in the normalization scaffold input-request table.
+\end{itemize}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/theory\_scaffold/theory\_input\_status.png}
+\par\smallskip
+\small\textbf{Figure:} Frozen-input status for FONLL, final data, photon-flux/EMD, and auxiliary PYTHIA kinematic targets.\label{fig:theory-input-status}
+\end{center}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/theory\_scaffold/theory\_plot\_dependency\_flow.png}
+\par\smallskip
+\small\textbf{Figure:} Producer contract for converting frozen theory and final measurement inputs into AN-style comparison plots.\label{fig:theory-dependency-flow}
+\end{center}
+\paragraph{Representative tables.}
+\paragraph{Source table.} \texttt{support/data/normalization\_scaffold/external\_inputs\_needed.tsv}
+\begin{center}\scriptsize
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+id & status & owner & why & acceptable\_proxy \\ \hline
+final\_run\_lumi\_table & needed & analysis/lumi & Normalizes raw yields to differential cross sections. & None for final result; current scaffold can only plot raw yields. \\ \hline
+trigger\_menu\_prescales\_eras & needed & trigger & Defines trigger paths, prescale weighting, and era-dependent efficiency maps. & Candidate-level trigger bit fractions from the TWiki reduced tree. \\ \hline
+final\_efficiency\_maps & needed & mc/corrections & Converts fitted yields into acceptance/efficiency-corrected yields by pT and y bin. & Prompt-MC reco/gen proxy maps already produced. \\ \hline
+mc\_sample\_registry & needed & mc & Freezes pThat bins, cross sections, filter efficiencies, process IDs, and stitching weight & Stored McM snapshots and official prompt/nonprompt sample table. \\ \hline
+zdc\_calibration\_backport & needed & detector/zdc & Determines final ZDC energy scale, SOI/SOI+1 interpretation, and threshold table. & Data/EmptyBX ZDC-sum fits and threshold scans. \\ \hline
+emd\_and\_branching\_constants & needed & physics/constants & Needed for final gammaN/Ngamma normalization and branching-ratio propagation. & None for final result. \\ \hline
+fonll\_theory\_tables & needed & theory & Needed to reproduce final data/theory comparison figures. & Plotting script can be built once tables exist; no final overlay without theory points. \\ \hline
+\end{tabular}
+\end{center}
+\paragraph{Source table.} \texttt{support/data/theory\_scaffold/theory\_inputs\_needed.tsv}
+\begin{center}\scriptsize
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+id & status & owner & why & acceptable\_proxy \\ \hline
+final\_measurement\_points & needed & analysis/corrections & Required for final data/theory overlays. & Raw-yield proxy table only checks plotting plumbing. \\ \hline
+fonll\_h1\_zeus\_reference\_tables & needed & theory/reference & Recreates AN reference comparisons to H1/ZEUS and validates the local FONLL generation set & None for final comparison; only target slots can be scaffolded. \\ \hline
+fonll\_epPS21\_ct18\_cgc\_predictions & needed & theory/final & Defines the final model curves compared against the D0 measurement. & None for final comparison. \\ \hline
+photon\_flux\_emd\_inputs & needed & physics/constants & Needed to reproduce the EMD probability estimate and gammaN/Ngamma mapping. & Normalization scaffold lists this as an external input. \\ \hline
+pythia\_kinematic\_auxiliary\_branches & needed & mc & Needed for appendix Q2, Bjorken-x, and Egamma maps if they are not already in the flat MC  & Generated D0 pT/y and ProcessID proxy plots already exist. \\ \hline
+\end{tabular}
+\end{center}
+\paragraph{Source table.} \texttt{support/data/theory\_scaffold/theory\_target\_status.tsv}
+\begin{center}\scriptsize
+\begin{tabular}{|l|l|l|}
+\hline
+target & plot & input\_id \\ \hline
+Figure 58 & Q2 and y photoproduction cuts & fonll\_h1\_zeus\_reference\_tables \\ \hline
+Figure 59 & ZEUS data versus FONLL reference & fonll\_h1\_zeus\_reference\_tables \\ \hline
+Figure 60 & H1 data versus FONLL reference & fonll\_h1\_zeus\_reference\_tables \\ \hline
+Figure 61 & Local FONLL closure against H1 reference & fonll\_h1\_zeus\_reference\_tables \\ \hline
+Figure 63 & EMD probability estimate & photon\_flux\_emd\_inputs \\ \hline
+Figure 64 & Final D0 cross section versus FONLL/CGC & final\_measurement\_points \\ \hline
+Figure 73 & PYTHIA Q2 versus D0 kinematics & pythia\_kinematic\_auxiliary\_branches \\ \hline
+Figure 74 & PYTHIA Bjorken-x versus D0 kinematics & pythia\_kinematic\_auxiliary\_branches \\ \hline
+\end{tabular}
+\end{center}
+\paragraph{Source table.} \texttt{support/data/theory\_scaffold/plot\_theory\_comparison.template.py}
+\section*{15. Conclusions}
+\textbf{Status:} partial\\
+\textbf{Purpose in AN:} Summarize what has been reproduced and what remains.
+\paragraph{Reproduced or available now.}
+\begin{itemize}
+\item The current reproducible chain supports the D0 mass peak from recreated forests and selected skims.
+\end{itemize}
+\paragraph{Still missing or not final.}
+\begin{itemize}
+\item A complete AN recreation still requires final yields, corrections, systematics, and model comparisons.
+\end{itemize}
+\section*{Appendices. Provenance and Operational Details}
+\textbf{Status:} partial\\
+\textbf{Purpose in AN:} Collect provenance, target outputs, sample lists, and operational details.
+\paragraph{Reproduced or available now.}
+\begin{itemize}
+\item The draft includes a compact AN target index and reproduced artifact manifest.
+\item A pThat-stitching scaffold defines the private-MC sample registry fields, weighting formula, and appendix plot targets.
+\end{itemize}
+\paragraph{Still missing or not final.}
+\begin{itemize}
+\item Run-range, final pThat stitching, generator-production, MET-filter, EMD-pileup, and kinematic-correlation appendices need dedicated regeneration.
+\end{itemize}
+\begin{center}
+\includegraphics[width=0.88\textwidth]{support/figures/pthat\_stitching\_scaffold/pthat\_input\_coverage.png}
+\par\smallskip
+\small\textbf{Figure:} Current pThat stitching input coverage; private pThat registry and branch/weight conventions remain unfrozen.\label{fig:pthat-input-coverage}
+\end{center}
+\paragraph{Representative tables.}
+\paragraph{Source table.} \texttt{support/data/pthat\_stitching\_scaffold/pthat\_inputs\_needed.tsv}
+\begin{center}\scriptsize
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+id & status & owner & why & acceptable\_proxy \\ \hline
+private\_pthat\_sample\_registry & needed & mc/private & Defines every pThat bin and sample category entering the stitched distribution. & Stored official prompt/nonprompt McM table documents only the official flat MC, not privat \\ \hline
+pthat\_weight\_convention & needed & mc/corrections & Needed to combine pThat bins into a single physical distribution. & Template formula only. \\ \hline
+jet\_and\_d0\_correlation\_branches & needed & mc/forest & Needed for AN appendix plots of pThat, PF jet pT, calo jet pT, and D0-pThat correlations. & No final proxy; current MC proxy has D0 kinematics but not a frozen pThat registry. \\ \hline
+\end{tabular}
+\end{center}
+\paragraph{Source table.} \texttt{support/data/pthat\_stitching\_scaffold/pthat\_target\_status.tsv}
+\begin{center}\scriptsize
+\begin{tabular}{|l|l|l|}
+\hline
+target & plot & input\_id \\ \hline
+Figure 67 & stitched pThat distribution & private\_pthat\_sample\_registry \\ \hline
+Figure 68 & PF/calo jet pT by pThat bin and stitched & jet\_and\_d0\_correlation\_branches \\ \hline
+Figure 69 & D0 pT versus pThat correlation & jet\_and\_d0\_correlation\_branches \\ \hline
+Tables 12-18 & private pThat sample tables & private\_pthat\_sample\_registry \\ \hline
+\end{tabular}
+\end{center}
+\paragraph{Source table.} \texttt{support/data/pthat\_stitching\_scaffold/pthat\_sample\_registry.template.tsv}
+\begin{center}\scriptsize
+\begin{tabular}{|l|l|l|l|l|}
+\hline
+sample\_label & dataset\_or\_file & pthat\_min & process\_type & direct\_resolved\_class \\ \hline
+prompt & /prompt-GNucleusToD0-PhotonBeamA\_Bin-Pthat0\_Fil-Kpi\_UPC\_5p36TeV\_pythia8-evtgen/HINPbP &  &  &  \\ \hline
+nonprompt & /nonprompt-GNucleusToD0-PhotonBeamA\_Bin-Pthat0\_Fil-Kpi\_UPC\_5p36TeV\_pythia8-evtgen/HIN &  &  &  \\ \hline
+\end{tabular}
+\end{center}
+\paragraph{Source table.} \texttt{support/data/pthat\_stitching\_scaffold/pthat\_stitching\_formula.md}
+\clearpage
+\section*{Original AN Target Index}
+This is a compact machine-extracted index of figure/table targets from the AN text. It is used to guide future reproduction work, not as reproduced content.
+\begin{longtable}{lll p{0.62\textwidth}}
+\toprule
+Kind & Number & Current status & Extracted target clue \\
+\midrule
+\endhead
+Table & 1 & pending & Run numbers and the corresponding integrated luminosities in mb-1 as used in this analysis. These values were taken from OMS as an initial estimate, and they may not reflect the exact total luminosity used for the final normalization of the \\
+Figure & 1 & pending & (Left) Feynman diagram for the case of the direct photoproduction process. (Right) Example of the distribution of the process IDs from one sample of PYTHIA 8 photoproduction with Photon:ProcessType = 3 used, corresponding to direct processe \\
+Figure & 2 & mapped/partial & Feynman diagram for the resolved photoproduction process. 171 resolved processes. The selection of direct and resolved events in the MC was performed offline 172 by selecting on the process ID. \\
+Table & 2 & pending & The sample name, fragment, DAS Path, cross section, and filter efficiency of the offi- cial MC D0 filtered samples. Each of these samples contains 1M events individually, after all filtering. \\
+Table & 3 & pending & The sample name, fragment, DAS Path, and cross sections of the official MC D0 sam- ples. There is no filter applied i.e. filter efficiency is effectively 1. Each of these samples contains \\
+Table & 4 & pending & The sample name, fragment, DAS Path, and cross sections of the official MC inclu- sive samples used in background modeling. There is no filter applied i.e. filter efficiency is effectively 1. Each of these samples contains 100M events indiv \\
+Table & 5 & pending & Summary of the HLT trigger paths used in this analysis as well as the D0 pT ranges that they correspond to. In the case of the jet triggers, the two listed triggers operated during different run periods and in combination cover the full 202 \\
+Figure & 3 & mapped/partial & Efficiency of the 1n monitoring seeds for the ZDC plus (left) and the ZDC minus (right) as a function of the online ZDC energy sum where 1 count corresponds to 50 GeV. 248 \\
+Figure & 4 & mapped/partial & Turn-on curve for the ZDC with an online threshold of 16 counts (800 GeV) for the ZDC plus (red) and the ZDC minus (blue) in a sample of ? 3M Zero Bias events. 260 as a function of the D0 pT and rapidity. The underlying or eta dependence of t \\
+Figure & 5 & pending & Left: L1 trigger efficiency (leading track) map for ?N events calculated on the L1 11 12 \\
+Figure & 6 & mapped/partial & Left: Example of the offline ZDC signal with gaussian fits applied for the 1n, 2n, and 3n peaks for a sample of ? 3M Zero Bias events. Right: ZDC offline energy sum distribution for the ZDC Plus and ZDC Minus with fits to the 1n, 2n, 3n pea \\
+Figure & 7 & mapped/partial & (Left) Correlation between the ZDC energies in the ZDC plus and minus detectors measured for EBX events. (Right) Distribution of the signals for the two ZDCs for the same event sample. The ZDC energies are here obtained using the offline TS \\
+Figure & 8 & pending & Distribution of the high-purity track multiplicity (left) and leading jet pT (right) pass- ing and failing the full gap requirement as calculated from the edge of the eta acceptance thru the \\
+Figure & 9 & mapped/partial & (Left) Emax distributions in EBX events for both HF Plus and Minus. (Right) Cumula- tive distribution of Emax in EBX events for both HF Plus and Minus. 376 \\
+Figure & 10 & pending & Emax distribution of MC for direct and resolved processes in ?N events. The MC di- rect component should be seen as MC noise distribution. (The plot is shown for a high statistics D0 (p T , y) bin of the analysis) \\
+Figure & 11 & mapped/partial & Scan of the D0 cross section as a function of HF Plus Emax gap threshold in the L1 ZDCOR triggered sample for ?N events. (ZDCOR based trigger efficiency maps are not recalculated when varying the HF threshold.) \\
+Figure & 12 & mapped/partial & Scan of the D0 cross section as a function of HF Plus Emax gap threshold in the L1 ZDCXOR-AND-Jet8 triggered sample for ?N events. (ZDCOR based trigger efficiency maps are not recalculated when varying the HF threshold.) \\
+Figure & 13 & mapped/partial & Scan of the event selection efficiency as a function of HF Plus Emax gap threshold, only ?N events are used. (ZDCOR based trigger efficiency maps are not recalculated when varying the HF threshold.) \\
+Figure & 14 & mapped/partial & Scan of the event selection efficiency as a function of HF Plus Emax gap threshold, only ?N events are used. (ZDCOR based trigger efficiency maps are not recalculated when varying the HF threshold.) \\
+Figure & 15 & mapped/partial & Change of event selection efficiency in direct MC processes for HF energy threshold variations. (considering only ?N events) Left: HF Plus Emax = 5.5 GeV, Middle: HF Plus Emax = 9.2 GeV, Right: HF Plus Emax = 15.0 GeV \\
+Figure & 16 & mapped/partial & Change of event selection efficiency in resolved MC processes for HF energy thresh- old variations. (considering only ?N events) Left: HF Plus Emax = 5.5 GeV, Middle: HF Plus Emax = 9.2 GeV, Right: HF Plus Emax = 15.0 GeV \\
+Figure & 17 & mapped/partial & Distributions of the number of selected high purity tracks, charged hadron p T and charged hadron eta for data and MC with HF Plus energy threshold of 9.2 GeV in a high statistics D0 (p T , y) bin. (Only ?N events are considered) \\
+Figure & 18 & mapped/partial & Distributions of the number of selected high purity tracks, charged hadron p T and charged hadron eta for data and MC with HF Plus energy threshold of 15.0 GeV in a high statis- tics D0 (p T , y) bin. (15.0 GeV is the upper cut variation used \\
+Figure & 19 & mapped/partial & Efficiency after all event selections in bins of the impact parameter b (left), and Ncoll (right). 26 \\
+Figure & 20 & mapped/partial & Event selection efficiencies in bins of 2D ( D pT ,gen , Dy,gen ) (left panels), projected as a function of D pT ,gen (middle panels), and Dy,gen (right panels) for (a) vertex requirements, (b) \\
+Figure & 21 & pending & Comparisons of efficiencies with different empty rapidity gap definitions - 3.0 < |eta | < 5.2 (red) and 3.8 < |eta | < 5.2 (blue). A narrower empty gap requirement can retain good efficiency in forward region. \\
+Figure & 22 & mapped/partial & Efficiency after all event selections in bins of 2D ( D pT ,gen , Dy,gen ) (left), projected as a function of D pT ,gen (middle), and Dy,gen (right). 30 \\
+Table & 6 & mapped/partial & Single-track selection criteria applied. 483 For each pair of selected tracks, two D0 candidates are considered by assuming one of the 484 particle having the mass of the pion and the kaon and vice-versa. The secondary (decay) vertex \\
+Table & 7 & mapped/partial & Summary table of the selection criteria in different y and pT intervals. 504 7.1 Signal vs background distributions for D-selection variables 31 \\
+Figure & 23 & mapped/partial & The distribution of alpha before and after applying the optimal BDT cut . 508 7.1 Signal vs background distributions for D-selection variables \\
+Figure & 24 & mapped/partial & The distribution of 3D decay length significance before and after applying the opti- mal BDT cut . \\
+Figure & 25 & mapped/partial & The distribution of pT of the first daughter track before and after applying the opti- mal BDT cut . \\
+Figure & 26 & mapped/partial & The distribution of pT of the second daughter track before and after applying the optimal BDT cut . \\
+Figure & 27 & pending & The distribution of 3D decay length significance between MC and data. 573 the ratios of the branching ratios of the individual processes due to reconstruction efficiencies \\
+Figure & 28 & pending & The distribution of 2D decay length significance between MC and data. CMS Simulation pp s = 5.36 TeV CMS Simulation pp s = 5.36 TeV CMS Simulation pp s = 5.36 TeV \\
+Figure & 29 & pending & The distribution of alpha between MC and data. 585 histograms plotted in Figs. 34-36 and the fit result. Of the eighteen fits, seventeen have p-values \\
+Figure & 30 & pending & The distribution of secondary vertex probability between MC and data. CMS Simulation pp s = 5.36 TeV CMS Simulation pp s = 5.36 TeV CMS Simulation pp s = 5.36 TeV \\
+Figure & 31 & mapped/partial & The distribution of pT resolution of the leading pT daughter track between MC and data.The pT resolution exacerbates at forward rapidity, but is still well below the pre-selection 0.1. \\
+Figure & 32 & pending & Values of the width of the signal gaussian shape are shown as a function of pT and y. 7.2 Signal extraction 37 \\
+Figure & 33 & mapped/partial & Fit to the signal MC, swapped component with the wrong mass hypotheses, and the fit combining these two components in the interval 5 < pT < 8 GeV and 0 < |y| < 1. 38 \\
+Figure & 34 & mapped/partial & Mass fit for the D 0 yield extraction in pT 2-5 GeV. 7.2 Signal extraction 39 \\
+Figure & 35 & mapped/partial & Mass fit for the D 0 yield extraction in pT 5-8 GeV. 40 \\
+Figure & 36 & mapped/partial & Mass fit for the D 0 yield extraction in pT 8-12 GeV. 7.2 Signal extraction 41 \\
+Table & 8 & pending & Table detailing goodness of fit for 0nXn events across all pT and y bins. \\
+Table & 9 & pending & Table detailing goodness of fit for Xn0n events across all pT and y bins. 42 \\
+Figure & 37 & pending & Acceptance times total efficiency as a function of y for D0 mesons at pT intervals. 600 601 efficiencies are presented as a function of y, in intervals of pT . The efficiencies were obtained \\
+Figure & 38 & pending & Prompt and non-prompt D0 efficiencies as a function of pT and y. 612 The efficiency for prompt and non-prompt D0 are shown in Figure 38 as a function of pT and 613 y. The difference between prompt and non-prompt efficiencies relative to one \\
+Figure & 39 & pending & D0 efficiencies for direct and resolved photoproduction in the different pT intervals. 8.1 Gen-level study of the D0 dNdpT dy for prompt, non-prompt, direct and resolved events 45 \\
+Figure & 40 & pending & Comparison of gen-level direct and resolved D0 production. 46 \\
+Figure & 41 & pending & Comparison of gen-level prompt and non-prompt D0 production. 47 \\
+Figure & 42 & pending & Reweighting factors as a function of the D0 pT and y, where the reweighting factor is shown on the z-axis. 634 In Figure 43, the distributions of the D0 pT and y before and after reweighting are shown. After \\
+Figure & 43 & pending & Distributions of D0 pT (top left) and y (top right, bottom left and right) at the gener- ator level for a series of different weight choices are shown. Note that these distributions are \\
+Figure & 44 & pending & The trigger correction values (1/etrig ) with variations calculated for ?N events. The dashed line represents the value, which gives the largest percentage difference in the D0 cross \\
+Figure & 45 & pending & The reco-level closure test with the p T,min ? = 8 GeV/c samples for ?N events. The error bars represent only the statistical error of the calculated cross sections. \\
+Figure & 46 & pending & D0 acceptance x reconstruction efficiencies for direct and resolved photoproduction compared to the nominal efficiencies extracted using the unselected (resolved+direct) sample. 741 \\
+Figure & 47 & pending & Examples of systematic variations for the D 0 decay track minimum pT in pT bins 2-5 GeV and 8-12 GeV, the latter for the y bin with least statistics, chosen as it is most likely to fluctuate or result in a poor fit. \\
+Figure & 48 & pending & Examples of systematic variations for the background fit functional form, from the nominal exponential to a second order Chebyshev polynomial. The variation is plotted in pT bins 2-5 GeV and 8-12 GeV, the latter for the y bin with least sta \\
+Figure & 49 & mapped/partial & Percentage change of corrected cross sections due to systematic variation of the HF energy threshold. \\
+Figure & 50 & pending & DCA fits for each p T and y bin with data PbPb UPCs 1.38 nb-1 (5.36 TeV) PbPb UPCs 1.38 nb-1 (5.36 TeV) PbPb UPCs 1.38 nb-1 (5.36 TeV) \\
+Figure & 51 & pending & Comparison of prompt fraction from data (black) and MC (red). Due to low statistics in the highest pT bin, with no observable rapidity dependency, we use a single prompt fraction value for this entire pT range. \\
+Figure & 52 & pending & Prompt fraction systematic uncertainty on the cross section. 11.10 Summary table and plot of systematic uncertainties 59 \\
+Figure & 53 & pending & Breakdown of the relative uncertainty for various systematic uncertainty contri- butions as a function of y for ?N (left) and N? (right) results as a function of y for D0 2< pT <5 GeV. The total systematic uncertainty is also shown. \\
+Figure & 54 & pending & Breakdown of the relative uncertainty for various systematic uncertainty contri- butions as a function of y for ?N (left) and N? (right) results as a function of y for D0 5< pT <8 GeV. The total systematic uncertainty is also shown. \\
+Figure & 55 & pending & Breakdown of the relative uncertainty for various systematic uncertainty contri- butions as a function of y for ?N (left) and N? (right) results as a function of y for D0 8< pT <12 GeV. The total systematic uncertainty is also shown. \\
+Table & 10 & pending & Summary of systematic uncertainties and their contribution to the total systematic uncertainty of the ?N result. The total statistical error is also shown. pT interval (GeV) 2-5 5-8 8-12 \\
+Table & 11 & pending & Summary of systematic uncertainties and their contribution to the total systematic uncertainty of the N? result. The total statistical error is also shown. 61 \\
+Figure & 56 & pending & Corrected yields including systematic uncertainties as a function of y from ? + N (top) and N + ? (bottom) events in different for D0 mesons pT ranges from 2-4 GeV (green), 4-8 GeV (red), and 8-12 GeV (blue). These corrected yields were ach \\
+Figure & 57 & pending & Left: ?N and N? yields overlayed, where the ?N are symmetrized such that y -> -y in order to compare the yields. Right: The ratio of the symmetrized yields of N?/?N, propagating only the statistical uncertainties to the ratio. \\
+Figure & 58 & mapped/partial & Q2 and y cuts used by H1 and Zeus to define a photoproduction event [7] \\
+Figure & 59 & pending & Comparison of Zeus data with the FONLL predictions [7]. The dotted curve is the central value, the band included between the solid curves is obtained by adding linearly the uncertainties, the dashed band does not include the factorization s \\
+Figure & 60 & pending & Comparison of H1 EG33 data with the FONLL predictions [7]. The dotted curve is the central value, the band included between the solid curves is obtained by adding linearly the uncertainties, the dashed band does not include the factorizatio \\
+Figure & 61 & pending & Comparison between H1 EG33 data and original FONLL predictions [7] with the FONLL predictions we generated. FONLL predictions were generated for different choices of the factorization and renormalization scale, in agreement with what done i \\
+Figure & 63 & pending & Theory-based estimation of the EM dissociation probability. Photon-flux from [26]. 976 14 Comparison with FONLL predictions \\
+Figure & 64 & pending & Cross section of D0 meson production compared with the theoretical predictions pro- vided by FONLL with EPSS21 nuclear PDF parametrization, FONLL with proton PDF (CT18) parametrization, and a CGC prediction [24]. \\
+Figure & 65 & mapped/partial & Screenshot of OMS for run 374804, with highlighted section confirming this is the run where the jet seed threshold of 4.0 GeV to 2.5 GeV has officially taken place. 1007 Runs after 375746 are excluded because at the end of the run ZDC monit \\
+Figure & 66 & mapped/partial & Screenshot of ZDC monitoring doc. where the ZDC minus sums unpacking issue was observed and recorded. 1015 B pT,hat reweighting \\
+Figure & 67 & pending & pT,hat distribution for MC sample with the scaling factor applied. 1026 In order to perform further checks on the resulting distribution one can also look at the resulting 1027 pT,jet distributions. These are shown in Figure 68 where the pT \\
+Figure & 68 & pending & Left: Particle flow jet pT for the individual pT,hat,min samples as well as the combined distribution with pT,hat scaling factors applied. Right: Calorimeter jet pT for the individual \\
+Figure & 69 & pending & 2D correlation plots of the D0 p T as a function of the pT,hat . 72 \\
+Table & 12 & pending & The pT,hat,min , locations, and cross sections of baseline samples produced for the pho- ton flux within PYTHIA 8. Here diffractive processes were removed in offline processing. D0 filtering and a forced D0 decay has been applied in this sa \\
+Table & 13 & pending & The pT,hat,min , locations, and cross sections of baseline samples produced for the pho- ton flux within PYTHIA 8. Photon process 3 was selected for this sample, which includes direct \\
+Table & 14 & mapped/partial & The pT,hat,min , locations, and cross sections of baseline samples produced for the pho- ton flux within PYTHIA 8. No process selection or D0 filtering is present in this sample. 75 \\
+Table & 15 & pending & The pT,hat,min , locations, and cross sections of baseline samples produced for the pho- ton flux within PYTHIA 8. Photon process 3 was selected for this sample, which includes direct \\
+Table & 16 & pending & The pT,hat,min , locations, and cross sections of baseline samples produced for the pho- ton flux within PYTHIA 8. Photon process 3 was selected for this sample, which includes direct \\
+Table & 17 & pending & The pT,hat,min , locations, and cross sections of baseline samples produced for the pho- ton flux within PYTHIA 8. Photon process 3 was selected for this sample, which includes direct \\
+Table & 18 & pending & The pT,hat,min , locations, and cross sections of baseline samples produced for the pho- ton flux within PYTHIA 8. Photon process 3 was selected for this sample, which includes direct \\
+Figure & 70 & mapped/partial & Sample distributions of the ZDC signal in the first (left) and second (right) hadronic channels for the ZDC minus (top) and the ZDC plus (bottom) for Run 374596. 1106 In order to extract the signal amplitude in channel, the following steps  \\
+Table & 19 & pending & Mean and sigma of the 1n, 2n, and 3n peaks. subtraction, the new value is given by Chargeped,corr = Chargemeas - muped ? c? (5) \\
+Figure & 71 & mapped/partial & ZDC Empty Bx data illustrating noise levels in the ZDC Plus and ZDC minus as a function of the offline energy sum. 82 \\
+Table & 20 & mapped/partial & List of ZDC L1 Trigger seeds, their logic, and other notes for seeds related to the minimum bias trigger. 83 \\
+Table & 21 & mapped/partial & List of ZDC L1 Trigger seeds, their logic, and other notes for seeds related to the UPC analysis. 84 \\
+Figure & 72 & pending & Schematic sketch of the muon detector (CSC subdetectors are highlighted in green). 1189 ? Halo-trigger fired and 2 flat CSC segments matching in ?phi ?R 1190 ? 2 flat CSC segments are matching in ?phi, ?R, ?t in the opposite endcaps \\
+Figure & 73 & pending & Q2 evaluated in PYTHIA8 versus the D0 meson kinematics. 94 \\
+Figure & 74 & pending & Bjorken-x evaluated in PYTHIA8 versus the D0 meson kinematics. \\
+Figure & 75 & pending & E? evaluated in PYTHIA8 versus the D0 meson kinematics. References 95 \\
+\bottomrule
+\end{longtable}
+\section*{Target Reproduction Plan}
+Each extracted AN figure/table target is assigned a current reproduction status and a concrete next producer path. This table is intentionally operational: future iterations should work down the missing/partial rows and then rerun the full workflow wrapper.
+\begin{longtable}{lll p{0.26\textwidth} p{0.34\textwidth}}
+\toprule
+Kind & Number & Status & Current artifact & Next production path \\
+\midrule
+\endhead
+Table & 1 & missing & Final luminosity source and run list need signoff. & Build luminosity/run table from OMS/brilcalc export and Golden JSON run selection. \\
+Figure & 1 & partial & Official prompt-MC ProcessID and generated-D0 kinematic proxy plots are produced. & run\_missing\_an\_mc\_proxy\_plots.sh; add process-ID mapping once direct/resolved definitions are frozen. \\
+Figure & 2 & partial & Official prompt-MC ProcessID and generated-D0 kinematic proxy plots are produced. & run\_missing\_an\_mc\_proxy\_plots.sh; add process-ID mapping once direct/resolved definitions are frozen. \\
+Table & 2 & partial & MC sample and McM notes exist in the CMS workspace. & Extend cms-official-mcctl/McM snapshots into AN-style sample tables with cross sections and filter efficiencies. \\
+Table & 3 & partial & MC sample and McM notes exist in the CMS workspace. & Extend cms-official-mcctl/McM snapshots into AN-style sample tables with cross sections and filter efficiencies. \\
+Table & 4 & partial & MC sample and McM notes exist in the CMS workspace. & Extend cms-official-mcctl/McM snapshots into AN-style sample tables with cross sections and filter efficiencies. \\
+Table & 5 & partial & Trigger-bit occupancy/proxy tables are produced when the official proxy bundle is available. & Build final trigger-seed/path tables from HLT/L1 menu snapshots and analysis trigger registry; keep proxy occupancy as validation. \\
+Figure & 3 & partial & ZDC/HF threshold and control plots in output/zdc-1n-thresholds and output/cut-derivation. & run\_zdc\_1n\_threshold\_derivation.sh plus derive\_hf\_gap\_cutoffs\_data\_mc.C; rebuild with run\_full\_d0\_an\_recreation\_workflow.sh. \\
+Figure & 4 & partial & ZDC/HF threshold and control plots in output/zdc-1n-thresholds and output/cut-derivation. & run\_zdc\_1n\_threshold\_derivation.sh plus derive\_hf\_gap\_cutoffs\_data\_mc.C; rebuild with run\_full\_d0\_an\_recreation\_workflow.sh. \\
+Figure & 5 & partial & Official-reference trigger-bit occupancy and candidate-level data bit-fraction proxy maps are produced when the official proxy bundle is available. & run\_missing\_an\_official\_proxy\_plots.sh; replace proxy maps with final trigger menu, prescale, and efficiency-map workflow once inputs are frozen. \\
+Figure & 6 & partial & ZDC/HF threshold and control plots in output/zdc-1n-thresholds and output/cut-derivation. & run\_zdc\_1n\_threshold\_derivation.sh plus derive\_hf\_gap\_cutoffs\_data\_mc.C; rebuild with run\_full\_d0\_an\_recreation\_workflow.sh. \\
+Figure & 7 & partial & ZDC/HF threshold and control plots in output/zdc-1n-thresholds and output/cut-derivation. & run\_zdc\_1n\_threshold\_derivation.sh plus derive\_hf\_gap\_cutoffs\_data\_mc.C; rebuild with run\_full\_d0\_an\_recreation\_workflow.sh. \\
+Figure & 8 & partial & HF threshold plots and selected-event proxy plots exist; cross-section/efficiency threshold scans are not final. & Extend derive\_hf\_gap\_cutoffs\_data\_mc.C to emit AN-style Emax, nTrack, jet-pT, efficiency, and threshold-variation panels. \\
+Figure & 9 & partial & ZDC/HF threshold and control plots in output/zdc-1n-thresholds and output/cut-derivation. & run\_zdc\_1n\_threshold\_derivation.sh plus derive\_hf\_gap\_cutoffs\_data\_mc.C; rebuild with run\_full\_d0\_an\_recreation\_workflow.sh. \\
+Figure & 10 & partial & HF threshold plots and selected-event proxy plots exist; cross-section/efficiency threshold scans are not final. & Extend derive\_hf\_gap\_cutoffs\_data\_mc.C to emit AN-style Emax, nTrack, jet-pT, efficiency, and threshold-variation panels. \\
+Figure & 11 & partial & HF threshold plots and selected-event proxy plots exist; cross-section/efficiency threshold scans are not final. & Extend derive\_hf\_gap\_cutoffs\_data\_mc.C to emit AN-style Emax, nTrack, jet-pT, efficiency, and threshold-variation panels. \\
+Figure & 12 & partial & HF threshold plots and selected-event proxy plots exist; cross-section/efficiency threshold scans are not final. & Extend derive\_hf\_gap\_cutoffs\_data\_mc.C to emit AN-style Emax, nTrack, jet-pT, efficiency, and threshold-variation panels. \\
+Figure & 13 & partial & HF threshold plots and selected-event proxy plots exist; cross-section/efficiency threshold scans are not final. & Extend derive\_hf\_gap\_cutoffs\_data\_mc.C to emit AN-style Emax, nTrack, jet-pT, efficiency, and threshold-variation panels. \\
+Figure & 14 & partial & HF threshold plots and selected-event proxy plots exist; cross-section/efficiency threshold scans are not final. & Extend derive\_hf\_gap\_cutoffs\_data\_mc.C to emit AN-style Emax, nTrack, jet-pT, efficiency, and threshold-variation panels. \\
+Figure & 15 & partial & HF threshold plots and selected-event proxy plots exist; cross-section/efficiency threshold scans are not final. & Extend derive\_hf\_gap\_cutoffs\_data\_mc.C to emit AN-style Emax, nTrack, jet-pT, efficiency, and threshold-variation panels. \\
+Figure & 16 & partial & HF threshold plots and selected-event proxy plots exist; cross-section/efficiency threshold scans are not final. & Extend derive\_hf\_gap\_cutoffs\_data\_mc.C to emit AN-style Emax, nTrack, jet-pT, efficiency, and threshold-variation panels. \\
+Figure & 17 & partial & HF threshold plots and selected-event proxy plots exist; cross-section/efficiency threshold scans are not final. & Extend derive\_hf\_gap\_cutoffs\_data\_mc.C to emit AN-style Emax, nTrack, jet-pT, efficiency, and threshold-variation panels. \\
+Figure & 18 & partial & HF threshold plots and selected-event proxy plots exist; cross-section/efficiency threshold scans are not final. & Extend derive\_hf\_gap\_cutoffs\_data\_mc.C to emit AN-style Emax, nTrack, jet-pT, efficiency, and threshold-variation panels. \\
+Figure & 19 & missing & Requires full MC sample registry, truth matching, event/D efficiency denominators, and reweighting definitions. & Implement MC truth-matching efficiency/reweighting producer over official prompt/nonprompt/direct/resolved samples. \\
+Figure & 20 & missing & Requires full MC sample registry, truth matching, event/D efficiency denominators, and reweighting definitions. & Implement MC truth-matching efficiency/reweighting producer over official prompt/nonprompt/direct/resolved samples. \\
+Figure & 21 & missing & Requires full MC sample registry, truth matching, event/D efficiency denominators, and reweighting definitions. & Implement MC truth-matching efficiency/reweighting producer over official prompt/nonprompt/direct/resolved samples. \\
+Figure & 22 & missing & Requires full MC sample registry, truth matching, event/D efficiency denominators, and reweighting definitions. & Implement MC truth-matching efficiency/reweighting producer over official prompt/nonprompt/direct/resolved samples. \\
+Table & 6 & partial & Selection definitions and independent/partial cut-derivation audits exist. & Convert config/selection\_independence.yaml and cut derivation outputs into AN-style selection tables. \\
+Table & 7 & partial & Selection definitions and independent/partial cut-derivation audits exist. & Convert config/selection\_independence.yaml and cut derivation outputs into AN-style selection tables. \\
+Figure & 23 & partial & Selected-data topology/daughter proxy plots plus BDT and floor/pointing validation plots exist. & render\_recreated\_an\_proxy\_plots.C plus BDT/topology derivation scripts; add before/after-BDT and MC/data sideband overlay panels. \\
+Figure & 24 & partial & Selected-data topology/daughter proxy plots plus BDT and floor/pointing validation plots exist. & render\_recreated\_an\_proxy\_plots.C plus BDT/topology derivation scripts; add before/after-BDT and MC/data sideband overlay panels. \\
+Figure & 25 & partial & Selected-data topology/daughter proxy plots plus BDT and floor/pointing validation plots exist. & render\_recreated\_an\_proxy\_plots.C plus BDT/topology derivation scripts; add before/after-BDT and MC/data sideband overlay panels. \\
+Figure & 26 & partial & Selected-data topology/daughter proxy plots plus BDT and floor/pointing validation plots exist. & render\_recreated\_an\_proxy\_plots.C plus BDT/topology derivation scripts; add before/after-BDT and MC/data sideband overlay panels. \\
+Figure & 27 & partial & Selected-data topology/daughter proxy plots plus BDT and floor/pointing validation plots exist. & render\_recreated\_an\_proxy\_plots.C plus BDT/topology derivation scripts; add before/after-BDT and MC/data sideband overlay panels. \\
+Figure & 28 & partial & Selected-data topology/daughter proxy plots plus BDT and floor/pointing validation plots exist. & render\_recreated\_an\_proxy\_plots.C plus BDT/topology derivation scripts; add before/after-BDT and MC/data sideband overlay panels. \\
+Figure & 29 & partial & Selected-data topology/daughter proxy plots plus BDT and floor/pointing validation plots exist. & render\_recreated\_an\_proxy\_plots.C plus BDT/topology derivation scripts; add before/after-BDT and MC/data sideband overlay panels. \\
+Figure & 30 & partial & Selected-data topology/daughter proxy plots plus BDT and floor/pointing validation plots exist. & render\_recreated\_an\_proxy\_plots.C plus BDT/topology derivation scripts; add before/after-BDT and MC/data sideband overlay panels. \\
+Figure & 31 & partial & Selected-data topology/daughter proxy plots plus BDT and floor/pointing validation plots exist. & render\_recreated\_an\_proxy\_plots.C plus BDT/topology derivation scripts; add before/after-BDT and MC/data sideband overlay panels. \\
+Figure & 32 & partial & 98-forest selected-skim mass peak and diagnostic pT/|y| mass-fit grids exist. & Extend render\_recreated\_an\_proxy\_plots.C or add final-yield fitter to write AN-style fit, pull, and goodness tables per bin. \\
+Figure & 33 & partial & 98-forest selected-skim mass peak and diagnostic pT/|y| mass-fit grids exist. & Extend render\_recreated\_an\_proxy\_plots.C or add final-yield fitter to write AN-style fit, pull, and goodness tables per bin. \\
+Figure & 34 & partial & 98-forest selected-skim mass peak and diagnostic pT/|y| mass-fit grids exist. & Extend render\_recreated\_an\_proxy\_plots.C or add final-yield fitter to write AN-style fit, pull, and goodness tables per bin. \\
+Figure & 35 & partial & 98-forest selected-skim mass peak and diagnostic pT/|y| mass-fit grids exist. & Extend render\_recreated\_an\_proxy\_plots.C or add final-yield fitter to write AN-style fit, pull, and goodness tables per bin. \\
+Figure & 36 & partial & 98-forest selected-skim mass peak and diagnostic pT/|y| mass-fit grids exist. & Extend render\_recreated\_an\_proxy\_plots.C or add final-yield fitter to write AN-style fit, pull, and goodness tables per bin. \\
+Table & 8 & partial & Diagnostic mass-fit summary exists for selected reproduced data. & Add final-yield fitter to write goodness-of-fit tables for 0nXn and Xn0n bins. \\
+Table & 9 & partial & Diagnostic mass-fit summary exists for selected reproduced data. & Add final-yield fitter to write goodness-of-fit tables for 0nXn and Xn0n bins. \\
+Figure & 37 & partial & Prompt-MC reco/gen proxy maps, selected-shape comparisons, and proxy reweighting maps are produced. & Extend run\_missing\_an\_mc\_proxy\_plots.sh to prompt/nonprompt and direct/resolved samples, then replace proxy ratios with final correction weights. \\
+Figure & 38 & partial & Prompt-MC reco/gen proxy maps, selected-shape comparisons, and proxy reweighting maps are produced. & Extend run\_missing\_an\_mc\_proxy\_plots.sh to prompt/nonprompt and direct/resolved samples, then replace proxy ratios with final correction weights. \\
+Figure & 39 & partial & Prompt-MC reco/gen proxy maps, selected-shape comparisons, and proxy reweighting maps are produced. & Extend run\_missing\_an\_mc\_proxy\_plots.sh to prompt/nonprompt and direct/resolved samples, then replace proxy ratios with final correction weights. \\
+Figure & 40 & partial & Prompt-MC reco/gen proxy maps, selected-shape comparisons, and proxy reweighting maps are produced. & Extend run\_missing\_an\_mc\_proxy\_plots.sh to prompt/nonprompt and direct/resolved samples, then replace proxy ratios with final correction weights. \\
+Figure & 41 & partial & Prompt-MC reco/gen proxy maps, selected-shape comparisons, and proxy reweighting maps are produced. & Extend run\_missing\_an\_mc\_proxy\_plots.sh to prompt/nonprompt and direct/resolved samples, then replace proxy ratios with final correction weights. \\
+Figure & 42 & partial & Prompt-MC reco/gen proxy maps, selected-shape comparisons, and proxy reweighting maps are produced. & Extend run\_missing\_an\_mc\_proxy\_plots.sh to prompt/nonprompt and direct/resolved samples, then replace proxy ratios with final correction weights. \\
+Figure & 43 & partial & Prompt-MC reco/gen proxy maps, selected-shape comparisons, and proxy reweighting maps are produced. & Extend run\_missing\_an\_mc\_proxy\_plots.sh to prompt/nonprompt and direct/resolved samples, then replace proxy ratios with final correction weights. \\
+Figure & 44 & partial & Official-reference trigger-bit occupancy and candidate-level data bit-fraction proxy maps are produced when the official proxy bundle is available. & run\_missing\_an\_official\_proxy\_plots.sh; replace proxy maps with final trigger menu, prescale, and efficiency-map workflow once inputs are frozen. \\
+Figure & 45 & missing & Requires full MC sample registry, truth matching, event/D efficiency denominators, and reweighting definitions. & Implement MC truth-matching efficiency/reweighting producer over official prompt/nonprompt/direct/resolved samples. \\
+Figure & 46 & missing & Requires full MC sample registry, truth matching, event/D efficiency denominators, and reweighting definitions. & Implement MC truth-matching efficiency/reweighting producer over official prompt/nonprompt/direct/resolved samples. \\
+Figure & 47 & partial & Official-reference systematic mass-variation and DCA prompt-fraction proxy panels are produced when the official proxy bundle is available. & run\_missing\_an\_official\_proxy\_plots.sh; replace proxies with final corrected-yield systematic runner after final fit/correction chain is complete. \\
+Figure & 48 & partial & Official-reference systematic mass-variation and DCA prompt-fraction proxy panels are produced when the official proxy bundle is available. & run\_missing\_an\_official\_proxy\_plots.sh; replace proxies with final corrected-yield systematic runner after final fit/correction chain is complete. \\
+Figure & 49 & partial & HF threshold efficiency/leakage scans and HF gap distributions are produced; final corrected-cross-section variation is not. & After final corrections are available, rerun the HF threshold scan through the cross-section builder. \\
+Figure & 50 & partial & Official-reference systematic mass-variation and DCA prompt-fraction proxy panels are produced when the official proxy bundle is available. & run\_missing\_an\_official\_proxy\_plots.sh; replace proxies with final corrected-yield systematic runner after final fit/correction chain is complete. \\
+Figure & 51 & partial & Official-reference systematic mass-variation and DCA prompt-fraction proxy panels are produced when the official proxy bundle is available. & run\_missing\_an\_official\_proxy\_plots.sh; replace proxies with final corrected-yield systematic runner after final fit/correction chain is complete. \\
+Figure & 52 & partial & Official-reference systematic mass-variation and DCA prompt-fraction proxy panels are produced when the official proxy bundle is available. & run\_missing\_an\_official\_proxy\_plots.sh; replace proxies with final corrected-yield systematic runner after final fit/correction chain is complete. \\
+Figure & 53 & missing & Depends on completed final signal extraction and correction chain. & Implement systematic-variation runner after final yield, efficiency, prompt-fraction, and fit models are frozen. \\
+Figure & 54 & missing & Depends on completed final signal extraction and correction chain. & Implement systematic-variation runner after final yield, efficiency, prompt-fraction, and fit models are frozen. \\
+Figure & 55 & missing & Depends on completed final signal extraction and correction chain. & Implement systematic-variation runner after final yield, efficiency, prompt-fraction, and fit models are frozen. \\
+Table & 10 & missing & Depends on final corrections and systematic scans. & Emit systematic uncertainty tables from the systematic-variation runner. \\
+Table & 11 & missing & Depends on final corrections and systematic scans. & Emit systematic uncertainty tables from the systematic-variation runner. \\
+Figure & 56 & missing & Final corrected yields are not yet produced. & Implement final cross-section/result plotter after luminosity, branching fraction, trigger/event/D efficiencies, EMD, and systematics are available. \\
+Figure & 57 & missing & Final corrected yields are not yet produced. & Implement final cross-section/result plotter after luminosity, branching fraction, trigger/event/D efficiencies, EMD, and systematics are available. \\
+Figure & 58 & missing & Theory input tables and final measurement points are not yet reproduced. & Implement FONLL/PYTHIA/theory-comparison producer from documented theory inputs and generated MC kinematics. \\
+Figure & 59 & missing & Theory input tables and final measurement points are not yet reproduced. & Implement FONLL/PYTHIA/theory-comparison producer from documented theory inputs and generated MC kinematics. \\
+Figure & 60 & missing & Theory input tables and final measurement points are not yet reproduced. & Implement FONLL/PYTHIA/theory-comparison producer from documented theory inputs and generated MC kinematics. \\
+Figure & 61 & missing & Theory input tables and final measurement points are not yet reproduced. & Implement FONLL/PYTHIA/theory-comparison producer from documented theory inputs and generated MC kinematics. \\
+Figure & 63 & missing & Theory input tables and final measurement points are not yet reproduced. & Implement FONLL/PYTHIA/theory-comparison producer from documented theory inputs and generated MC kinematics. \\
+Figure & 64 & missing & Final corrected yields are not yet produced. & Implement final cross-section/result plotter after luminosity, branching fraction, trigger/event/D efficiencies, EMD, and systematics are available. \\
+Figure & 65 & external/reference & ZDC/HF threshold and control plots in output/zdc-1n-thresholds and output/cut-derivation. & Replace screenshots/schematics with cited source references or locally documented metadata where allowed. \\
+Figure & 66 & external/reference & ZDC/HF threshold and control plots in output/zdc-1n-thresholds and output/cut-derivation. & Replace screenshots/schematics with cited source references or locally documented metadata where allowed. \\
+Figure & 67 & missing & Private MC pThat sample list and scaling factors need a frozen registry. & Implement pThat stitching and jet/D0 correlation producer over private MC sample manifests. \\
+Figure & 68 & missing & Private MC pThat sample list and scaling factors need a frozen registry. & Implement pThat stitching and jet/D0 correlation producer over private MC sample manifests. \\
+Figure & 69 & missing & Private MC pThat sample list and scaling factors need a frozen registry. & Implement pThat stitching and jet/D0 correlation producer over private MC sample manifests. \\
+Table & 12 & partial & MC sample and McM notes exist in the CMS workspace. & Extend cms-official-mcctl/McM snapshots into AN-style sample tables with cross sections and filter efficiencies. \\
+Table & 13 & partial & MC sample and McM notes exist in the CMS workspace. & Extend cms-official-mcctl/McM snapshots into AN-style sample tables with cross sections and filter efficiencies. \\
+Table & 14 & partial & MC sample and McM notes exist in the CMS workspace. & Extend cms-official-mcctl/McM snapshots into AN-style sample tables with cross sections and filter efficiencies. \\
+Table & 15 & partial & MC sample and McM notes exist in the CMS workspace. & Extend cms-official-mcctl/McM snapshots into AN-style sample tables with cross sections and filter efficiencies. \\
+Table & 16 & partial & MC sample and McM notes exist in the CMS workspace. & Extend cms-official-mcctl/McM snapshots into AN-style sample tables with cross sections and filter efficiencies. \\
+Table & 17 & partial & MC sample and McM notes exist in the CMS workspace. & Extend cms-official-mcctl/McM snapshots into AN-style sample tables with cross sections and filter efficiencies. \\
+Table & 18 & partial & MC sample and McM notes exist in the CMS workspace. & Extend cms-official-mcctl/McM snapshots into AN-style sample tables with cross sections and filter efficiencies. \\
+Figure & 70 & partial & ZDC EmptyBX/noise and threshold inputs exist; channel-level AN-style panels are not complete. & Extend ZDC derivation macro to produce channel-by-channel SOI/SOI+1 and peak-fit appendix plots. \\
+Table & 19 & partial & ZDC 1n threshold candidate table exists. & Extend ZDC peak fitter to produce 1n/2n/3n mean/sigma appendix table. \\
+Figure & 71 & partial & ZDC EmptyBX/noise and threshold inputs exist; channel-level AN-style panels are not complete. & Extend ZDC derivation macro to produce channel-by-channel SOI/SOI+1 and peak-fit appendix plots. \\
+Table & 20 & partial & Trigger-bit occupancy/proxy tables are produced when the official proxy bundle is available. & Build final trigger-seed/path tables from HLT/L1 menu snapshots and analysis trigger registry; keep proxy occupancy as validation. \\
+Table & 21 & partial & Trigger-bit occupancy/proxy tables are produced when the official proxy bundle is available. & Build final trigger-seed/path tables from HLT/L1 menu snapshots and analysis trigger registry; keep proxy occupancy as validation. \\
+Figure & 72 & external/reference & These are documentation/reference figures rather than recreated analysis-data plots. & Replace screenshots/schematics with cited source references or locally documented metadata where allowed. \\
+Figure & 73 & missing & Theory input tables and final measurement points are not yet reproduced. & Implement FONLL/PYTHIA/theory-comparison producer from documented theory inputs and generated MC kinematics. \\
+Figure & 74 & missing & Theory input tables and final measurement points are not yet reproduced. & Implement FONLL/PYTHIA/theory-comparison producer from documented theory inputs and generated MC kinematics. \\
+Figure & 75 & missing & Theory input tables and final measurement points are not yet reproduced. & Implement FONLL/PYTHIA/theory-comparison producer from documented theory inputs and generated MC kinematics. \\
+\bottomrule
+\end{longtable}
+\section*{Next Jobs Needed for a Full AN Recreation}
+\begin{enumerate}
+\item Run or import the full trigger-efficiency workflow and generate AN-style trigger maps/tables.
+\item Generate final raw-yield fits in every pT,y bin from the reproduced selected skim, including residual and pull plots.
+\item Build D0 acceptance/reconstruction/selection efficiency maps from matched prompt/nonprompt MC.
+\item Derive or import MC reweighting tables and run efficiency closure after reweighting.
+\item Compute cross sections with luminosity, branching fraction, prescales, event efficiency, D efficiency, and EMD corrections.
+\item Run all systematic variations and generate the final uncertainty tables.
+\item Regenerate FONLL/theory comparison tables and final result plots.
+\end{enumerate}
+\end{document}

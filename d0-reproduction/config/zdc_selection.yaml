@@ -1,0 +1,51 @@
+# DOC_OWNER: cms-analysis-manager canonical ZDC selection recipe.
+# TOKEN_NOTE: read this file before discussing or reimplementing D0 ZDC cuts.
+version: 1
+updated_utc: "2026-06-22T00:00:00Z"
+source:
+  document: D0_production_in_UPC_PbPb_in_0nXn_events_with_rapidity_gap_AN
+  line_ranges:
+    offline_xor: "Section 5.1, p. 12, lines 307-309"
+    signal_and_thresholds: "Section 5.2, pp. 12-13, lines 319-326"
+    zero_neutron_efficiency: "Section 5.2, p. 13, lines 328-341"
+    xn_efficiency: "Section 5.2, p. 13, lines 343-348"
+    adc_recipe: "Appendix E, pp. 79-80, lines 1094-1124"
+    em_pileup: "Appendix J, p. 92, lines 1383-1426"
+offline_signal:
+  formula: "ZDCsignal = HADsum + 0.1 * EMsum"
+  em_weight: 0.1
+  adc_recipe:
+    - ADC to fC conversion
+    - pedestal subtraction
+    - gain correction
+    - out-of-time pileup subtraction
+    - offline TS2 minus TS1 signal extraction
+thresholds_gev:
+  plus_1n: 1100.0
+  minus_1n: 1000.0
+selection:
+  xn0n: "plus > plus_1n and minus < minus_1n"
+  zero_n_xn: "minus > minus_1n and plus < plus_1n"
+  xor_0nxn_class: "xn0n xor zero_n_xn"
+efficiency_checks:
+  zero_neutron_side:
+    sample: empty bunch-crossing events
+    criterion: empirical noise above the 1n threshold
+    an_statement: "noise above threshold is below 1e-6"
+  xn_side:
+    sample: ZeroBias or equivalent ZDC spectrum
+    criterion: integrate fitted 1n, 2n, and 3n ZDC distributions above threshold
+    an_statement: "inefficiency is about 1 percent"
+em_pileup:
+  nominal_survival_probability: 0.96
+  conservative_peak_pileup_survival_probability: 0.92
+  use: correction_or_uncertainty_after_offline_zdc_selection
+implementation_policy:
+  nominal_cut_source: an_calibrated_recipe
+  validation_sources:
+    - data-driven 1n peak fits
+    - EmptyBX noise tail
+    - same-event recreated-vs-official ZDC closure
+  do_not_use_for_nominal_zdc:
+    - MC samples with zero or missing ZDC detector response
+    - retention-only threshold scans

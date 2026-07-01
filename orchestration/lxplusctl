@@ -1,0 +1,105 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(realpath -m "${AGENT_NETWORK_ROOT:-/home/ubuntu/agent-network}")"
+# shellcheck source=/home/ubuntu/agent-network/scripts/ledger-hook.sh
+source "$ROOT/scripts/ledger-hook.sh"
+
+CERN_USER="${CERN_USER:-evzhang}"
+CERN_REALM="${CERN_REALM:-CERN.CH}"
+CERN_PRINCIPAL="${CERN_PRINCIPAL:-${CERN_USER}@${CERN_REALM}}"
+SSH_HOST="${LXPLUS_SSH_HOST:-lxplus-codex}"
+
+usage() {
+  cat <<USAGE
+Usage:
+  lxplusctl status
+  lxplusctl login
+  lxplusctl test
+  lxplusctl fresh-test
+  lxplusctl ssh [remote command...]
+  lxplusctl master-check
+  lxplusctl master-start
+  lxplusctl master-refresh
+  lxplusctl master-stop
+
+Environment:
+  CERN_USER=$CERN_USER
+  CERN_REALM=$CERN_REALM
+  LXPLUS_SSH_HOST=$SSH_HOST
+
+Notes:
+  login runs kinit for $CERN_PRINCIPAL and may prompt for CERN password/2FA.
+  Do not paste CERN passwords, OTPs, or recovery codes into Codex chat.
+USAGE
+}
+
+command="${1:-status}"
+shift || true
+
+ledger_hook_start script lxplusctl "lxplusctl ${command}" "cern lxplus ssh kerberos"
+
+case "$command" in
+  status)
+    printf 'Principal: %s\n' "$CERN_PRINCIPAL"
+    printf 'SSH host: %s\n\n' "$SSH_HOST"
+    if klist -s; then
+      klist -f
+    else
+      printf 'No Kerberos ticket cache is currently available.\n'
+    fi
+    printf '\nNoninteractive SSH test:\n'
+    if ssh -o BatchMode=yes -o ConnectTimeout=10 "$SSH_HOST" 'hostname; whoami'; then
+      printf 'LXPLUS SSH is ready.\n'
+    else
+      printf 'LXPLUS SSH is not ready without interactive authentication.\n'
+      exit 1
+    fi
+    ;;
+  login)
+    printf 'Requesting Kerberos ticket for %s\n' "$CERN_PRINCIPAL"
+    printf 'This may prompt for CERN password and 2FA. Keep those outside Codex chat.\n\n'
+    kinit -f -r 120h "$CERN_PRINCIPAL"
+    klist -f
+    ;;
+  test)
+    ssh -o BatchMode=yes -o ConnectTimeout=10 "$SSH_HOST" 'hostname; whoami'
+    ;;
+  fresh-test)
+    ssh -S none -o ControlMaster=no -o ControlPath=none -o BatchMode=yes -o ConnectTimeout=10 "$SSH_HOST" 'hostname; whoami'
+    ;;
+  ssh)
+    if [[ "$#" -gt 0 ]]; then
+      ssh "$SSH_HOST" "$@"
+    else
+      exec ssh "$SSH_HOST"
+    fi
+    ;;
+  master-check)
+    ssh -O check "$SSH_HOST"
+    ;;
+  master-start)
+    if ssh -O check "$SSH_HOST" >/dev/null 2>&1; then
+      printf 'SSH ControlMaster is already running for %s.\n' "$SSH_HOST"
+    else
+      ssh -MNf "$SSH_HOST"
+      printf 'Started SSH ControlMaster for %s.\n' "$SSH_HOST"
+    fi
+    ;;
+  master-refresh)
+    ssh -O exit "$SSH_HOST" >/dev/null 2>&1 || true
+    ssh -MNf "$SSH_HOST"
+    printf 'Refreshed SSH ControlMaster for %s.\n' "$SSH_HOST"
+    ssh -o BatchMode=yes -o ConnectTimeout=10 "$SSH_HOST" 'hostname; whoami'
+    ;;
+  master-stop)
+    ssh -O exit "$SSH_HOST" || true
+    ;;
+  -h|--help|help)
+    usage
+    ;;
+  *)
+    usage >&2
+    exit 2
+    ;;
+esac

@@ -1,0 +1,258 @@
+\documentclass[10pt]{article}
+\usepackage[margin=0.75in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,urlcolor=blue,linkcolor=blue}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.35em}
+\sloppy
+
+\title{\texorpdfstring{\(D^+ \to K\pi\pi\) Mass Peak Search}{D+ to Kpipi Mass Peak Search}}
+\author{Evan Zhang}
+\date{Codex export updated 2026-06-23}
+
+\begin{document}
+\maketitle
+\vspace{-1.2em}
+
+\section*{Goal}
+
+This is a separate task from the \(D^0\) analysis-note reproduction. The
+immediate goal is only to obtain a credible \(D^+ \to K\pi\pi\) mass peak from
+2023 PbPb UPC data. Final \(D^+\) cut derivation, efficiencies, normalization,
+and cross-section extraction are not attempted here yet.
+
+\section*{Current Workflow}
+
+\begin{enumerate}
+\item Start from the same 2023 HIForward0 MINIAOD input family used for the
+\(D^0\) reproduction.
+\item Run the 2023 forest config with Dfinder configured for
+\(D^+/D^- \to K\pi\pi\):
+\[
+\texttt{Dchannel} =
+(0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0).
+\]
+The full 18-entry vector is required because Dfinder checks that every cut
+vector has the same channel length.
+\item Keep a minimal D+ forest containing event bookkeeping, track/PF/ZDC
+diagnostics, and \texttt{Dfinder/ntDkpipi}.
+\item Plot \(\texttt{Dmass}\) with transparent diagnostic selections:
+raw Dfinder \(K\pi\pi\), a basic kinematic window, and a loose topology
+window.
+\item Scale with CRAB only after bounded local and tiny-CRAB smokes validate
+the config.
+\end{enumerate}
+
+\section*{Differences from the \(D^0\) AN Workflow}
+
+This document is not a replacement for the \(D^0\) analysis-note reproduction.
+It is a first \(D^+\) peak-finding workflow built on the same 2023 UPC input
+data family. The main differences are:
+
+\begin{itemize}
+\item The reconstructed channel changes from
+\[
+D^0/\overline{D^0}\to K\pi
+\]
+to
+\[
+D^+/D^-\to K\pi\pi .
+\]
+The plotted tree is therefore \texttt{Dfinder/ntDkpipi}, not
+\texttt{Dfinder/ntDkpi}.
+\item The Dfinder channel mask changes from the \(D^0\)-enabled channels to the
+18-entry vector with only the \(D^+/D^-\) \(K\pi\pi\) channels enabled:
+\[
+\texttt{Dchannel} =
+(0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0).
+\]
+\item The candidate mass is the \(K\pi\pi\) invariant mass under Dfinder's
+kaon/pion mass hypotheses. There is no explicit kaon/pion PID in this
+diagnostic workflow.
+\item The \(D^0\) AN topological cuts are not reused as final \(D^+\) cuts.
+The current loose/medium/tight topology selections are diagnostic peak-finding
+cuts only. A real \(D^+\) analysis would need its own optimization, sideband
+checks, signal efficiency, and mass-shape validation.
+\item The \(D^0\) AN corrections, yields, efficiencies, systematic
+uncertainties, and cross-section extraction are not applied here. This note
+only demonstrates that the recreated foresting path can produce a visible
+\(D^+ \to K\pi\pi\) mass peak.
+\item The event-level UPC data source and foresting machinery are inherited
+from the \(D^0\) reproduction infrastructure, but the output forests are newly
+produced D+ forests rather than the \(D^0\) selected skim used in the AN.
+\end{itemize}
+
+\section*{Smoke Validation}
+
+The first fixed local smoke used 100 MINIAOD events. The earlier zero-candidate
+attempt was traced to a malformed 14-entry \texttt{Dchannel} override; after
+restoring the required 18 entries, Dfinder stopped printing the size-mismatch
+warning and populated \texttt{ntDkpipi}.
+
+\begin{itemize}
+\item No-superfilter smoke: 100 \texttt{ntDkpipi} event entries.
+\item Normal UPC-filtered smoke: 11 filtered \texttt{ntDkpipi} event entries.
+\item Candidate count before diagnostic mass/kinematic cuts: 8,130.
+\item Diagnostic mass plot: 8,111 raw Kpipi candidates, 1,284 basic kinematic
+candidates, and 34 loose-topology candidates.
+\end{itemize}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.82\linewidth]{support/figures/dplus_peak/dplus_mass_smoke100.png}
+\caption{Smoke diagnostic from 100 input events. This validates D+ branch
+production and plotting only; it is not enough statistics to claim a
+\(D^+\) peak.}
+\end{figure}
+
+\section*{CRAB Status and Medium Run}
+
+A one-job CRAB smoke was first attempted with the physically bounded
+100-event MINIAOD file, rather than relying on CRAB-side \texttt{maxEvents}.
+That task failed before physics processing because the tiny file is on
+CERNBOX under \texttt{/eos/user/e/evzhang/...}, while CRAB resolved the
+submitted \texttt{/store/user/...} LFN through the CMS \texttt{/eos/cms}
+namespace. The failed tiny task was canceled to prevent retries.
+
+A replacement one-file CRAB smoke was submitted with a real HIForward0 MINIAOD
+LFN. It produced output successfully. The automated chain then submitted the
+100-file medium run.
+
+\begin{itemize}
+\item Canceled tiny task:
+\texttt{260622\_232410:evzhang\_crab\_dplus\_minimal\_tiny\_crab\_smoke\_20260622\_2323}.
+\item Completed one-file smoke task:
+\texttt{260622\_233514:evzhang\_crab\_dplus\_onefile\_crab\_smoke\_20260622\_2338}.
+\item One-file smoke project directory:
+\begin{quote}\footnotesize
+\path{/afs/cern.ch/work/e/evzhang/codex-work/analysis/dplus-peak/crab-smoke/crab-projects/crab_dplus_onefile_crab_smoke_20260622_2338}
+\end{quote}
+\item Medium task:
+\texttt{260623\_062056:evzhang\_crab\_dplus\_medium\_100files\_20260622\_overnight}.
+\item Medium project directory:
+\begin{quote}\footnotesize
+\path{/afs/cern.ch/work/e/evzhang/codex-work/analysis/dplus-peak/crab-smoke/crab-projects/crab_dplus_medium_100files_20260622_overnight}
+\end{quote}
+\item Active chain monitor:
+\texttt{research/cms-dplus-analysis/scripts/launch\_dplus\_medium\_after\_smoke.sh}.
+\item Chain behavior: monitor for 100 output ROOT files and run the D+ mass
+plotter when they are all visible.
+\end{itemize}
+
+\section*{Preliminary Medium-Run Checkpoint}
+
+A checkpoint plot was made while the medium CRAB task was still running. To
+avoid scanning all visible multi-GB forest outputs interactively, the checkpoint
+used the first four visible medium-run ROOT files.
+
+\begin{itemize}
+\item Checkpoint label:
+\texttt{dplus\_medium\_prelim4\_readable\_20260623T1100Z}.
+\item Visible medium outputs at checkpoint time: 34.
+\item Used outputs: 4.
+\item Candidates in the four-file checkpoint:
+615,362 loose topology, 9,072 medium topology, and 202 tight topology.
+\item Medium-topology diagnostic fit:
+\[
+m = 1.87381~\mathrm{GeV},\qquad
+\sigma = 0.00649~\mathrm{GeV}.
+\]
+\end{itemize}
+
+This was close to the nominal \(D^+\) mass, but the four-file plot was still
+dominated by smooth combinatorial background and statistical fluctuations.
+
+A stronger checkpoint was then run over 20 visible medium-run ROOT files. The
+medium topology view was still background dominated, but the tight topology
+view produced a visible peak near the nominal \(D^+\) mass.
+
+\begin{itemize}
+\item Checkpoint label:
+\texttt{dplus\_medium\_prelim20\_toposcan\_20260623T1105Z}.
+\item Visible medium outputs at checkpoint time: 39.
+\item Used outputs: 20.
+\item Candidates in the 20-file checkpoint:
+2,680,780 loose topology, 38,122 medium topology, and 932 tight topology.
+\item Tight-topology diagnostic fit:
+\[
+m = 1.87190~\mathrm{GeV},\qquad
+\sigma = 0.01486~\mathrm{GeV}.
+\]
+\end{itemize}
+
+The honest current classification is therefore \emph{credible preliminary
+peak}. It is not a final analysis result: these are diagnostic topology cuts,
+not yet final optimized or efficiency-validated \(D^+\) selections.
+
+At the user's request, the same plotter was rerun over all 59 medium-run ROOT
+outputs visible at that time. This is the current best-statistics checkpoint.
+
+\begin{itemize}
+\item Checkpoint label:
+\texttt{dplus\_medium\_prelim59\_toposcan\_20260623T1230Z}.
+\item Visible and used medium outputs: 59.
+\item Candidates in the 59-file checkpoint:
+8,497,790 loose topology, 118,117 medium topology, and 2,570 tight topology.
+\item Medium-topology diagnostic fit:
+\[
+m = 1.87164~\mathrm{GeV},\qquad
+\sigma = 0.00803~\mathrm{GeV}.
+\]
+\item Tight-topology diagnostic fit:
+\[
+m = 1.87153~\mathrm{GeV},\qquad
+\sigma = 0.01142~\mathrm{GeV}.
+\]
+\end{itemize}
+
+The 59-file tight-topology plot is the clearest current D+ peak result.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.82\linewidth]{support/figures/dplus_peak/dplus_mass_dplus_medium_prelim4_readable_20260623T1100Z_medium_topology.png}
+\caption{Four-file medium-run checkpoint under the medium topology diagnostic.
+The fitted mean is near the expected \(D^+\) mass, but the shape is not yet a
+robust visible peak.}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.82\linewidth]{support/figures/dplus_peak/dplus_mass_dplus_medium_prelim20_toposcan_20260623T1105Z_tight_topology.png}
+\caption{Twenty-file medium-run checkpoint under the tight topology diagnostic.
+This is the first credible preliminary \(D^+ \to K\pi\pi\) peak from the
+recreated D+ medium forests.}
+\end{figure}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.82\linewidth]{support/figures/dplus_peak/dplus_mass_dplus_medium_prelim59_toposcan_20260623T1230Z_tight_topology.png}
+\caption{Fifty-nine-file medium-run checkpoint under the tight topology
+diagnostic. This is the current best-statistics preliminary \(D^+ \to K\pi\pi\)
+peak from the recreated D+ forests.}
+\end{figure}
+
+\section*{Next Scale-Up}
+
+The medium CRAB monitor now ignores the one failed job and waits for 99 visible
+outputs. Once those outputs are present, it should automatically rerun the same
+D+ mass plotter on the larger sample.
+
+\section*{Durable Scripts}
+
+\begin{itemize}
+\item Local forest smoke:
+\texttt{research/cms-dplus-analysis/scripts/run\_2023\_dplus\_forest\_smoke.sh}.
+\item CRAB forest runner:
+\texttt{research/cms-dplus-analysis/scripts/run\_2023\_dplus\_forest\_crab\_smoke.sh}.
+\item Mass diagnostic macro:
+\texttt{research/cms-dplus-analysis/scripts/plot\_dplus\_mass.C}.
+\item Visible-output checkpoint helper:
+\texttt{research/cms-dplus-analysis/scripts/plot\_visible\_dplus\_crab\_outputs.sh}.
+\end{itemize}
+
+\end{document}

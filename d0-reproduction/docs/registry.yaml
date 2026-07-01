@@ -1,0 +1,799 @@
+# DOC_OWNER: cms-analysis-manager machine-readable D0 run/sample registry.
+# TOKEN_NOTE: scripts/cms-analysisctl status reads this; keep comments short.
+version: 1
+updated_utc: "2026-06-18T14:52:00Z"
+analysis:
+  id: cms-d0-mass-peak
+  status: active
+  owner: Evan Zhang
+  scope: Reproduce and validate a CMS D0 mass-peak analysis.
+  current_phase: setup
+  reproduction_policy: full_chain_from_least_reduced_inputs
+  reference_outputs_policy: existing skims and final plots are validation references, not nominal starting inputs
+  human_signoff_required_for:
+    - final physics interpretation
+    - CERN-side mutations
+    - CRAB submissions
+    - bulk transfers
+    - destructive cleanup
+paths:
+  local_workspace: research/cms-d0-analysis
+  lxplus_reproduction_root: /afs/cern.ch/work/e/evzhang/codex-work/analysis/d0-reproduction
+  lxplus_reproduction_eos_outputs: /eos/user/e/evzhang/codex-eos/outputs/d0-reproduction
+  lxplus_reference_root: /afs/cern.ch/user/e/evzhang/RootAnalysis/MITanalysisTest
+  prior_2026_runs: /afs/cern.ch/user/e/evzhang/RootAnalysis/MITanalysisTest/510&511&523&527&529&543&549
+  prior_2025_data: /afs/cern.ch/user/e/evzhang/RootAnalysis/MITanalysisTest/2025Data
+  prior_comparison: /afs/cern.ch/user/e/evzhang/RootAnalysis/MITanalysisTest/comparison_2025_vs_2026
+  hiforest_twiki_inventory_md: research/cms-d0-analysis/output/hiforest2025pbpbhf_datasets.md
+  hiforest_twiki_inventory_yaml: research/cms-d0-analysis/output/hiforest2025pbpbhf_datasets.yaml
+  pythia_mc_notes: research/cms-d0-analysis/PYTHIA_MC.md
+  official_mc_model_notes: research/cms-d0-analysis/MC_OFFICIAL_MODEL.md
+  cut_derivation_notes: research/cms-d0-analysis/CUT_DERIVATION.md
+  zdc_hf_cut_audit: research/cms-d0-analysis/output/zdc_hf_cut_audit/README.md
+  official_mc_mcm_snapshots: research/cms-d0-analysis/output/mcm
+  official_mc_local_fragments: work/cms-official-mc/python
+  lxplus_official_mc_fragments: /afs/cern.ch/work/e/evzhang/codex-work/analysis/d0-reproduction/mc/official-model/python
+datasets:
+  - id: hiforest2025pbpbhf-twiki
+    role: dataset-source
+    status: extracted
+    source_url: https://twiki.cern.ch/twiki/bin/view/CMS/HiForest2025PbPbHF
+    source_revision: "r67 2026-06-10"
+    notes: Relevant anchor is 2023_PbPb_UPC_Jan_2024_ReReco_Go.
+  - id: data-2023-jan2024-d0-skim-combined
+    role: reference-data-skim
+    year: 2023
+    run_range: "374804-375746"
+    status: reference_validated_exists_on_lxplus_reproduction_required
+    path: /eos/cms/store/group/phys_heavyions/wangj/Forest2023PbPb/Dzero_260212-hfle_2023PbPbUPC_Jan2024ReReco_20260212Forest_HIForward_Drej-pasor_Trig-4_isL1ZDCOr_microt.root
+    event_filter: hltZDCOr && PVfilter && pZDCEnergyFilter0nOr
+    reproduction_gate: regenerate from forests or MINIAOD and compare event count, candidate count, branch schema, cutflow, and mass spectra
+  - id: data-2023-jan2024-d0-skim-per-pd
+    role: reference-data-skim-components
+    year: 2023
+    run_range: "374804-375746"
+    status: reference_validated_count_on_lxplus_reproduction_required
+    count: 20
+    path_pattern: /eos/cms/store/group/phys_heavyions/wangj/Forest2023PbPb/Dzero_260212-hfle_2023PbPbUPC_Jan2024ReReco_20260212Forest_HIForward{0..19}_Drej-pasor_Trig-4.root
+  - id: data-2023-jan2024-forests-vanderbilt
+    role: forest-production-reference
+    year: 2023
+    run_range: "374804-375746"
+    status: twiki_listed_xrootd_auth_not_validated
+    path_pattern: root://xrootd-vanderbilt.sites.opensciencegrid.org//store/user/jdlang/Run3_PbPbUPC/Forest_2023_Jan2024ReReco_2025Reforest/HIForward[0-19]/crab_2023PbPbUPC_Jan2024ReReco_20260212Forest_HIForward[0-19]
+    reproduction_gate: rerun or independently validate foresting from MINIAOD if foresting was analysis-owned
+  - id: json-2023-good-zdc-golden
+    role: certification-json
+    year: 2023
+    status: validated_exists_on_lxplus
+    path: /eos/user/c/cmsdqm/www/CAF/certification/Collisions23HI/Cert_Collisions2023HI_374288_375823_Good_ZDC_Golden.json
+  - id: control-2023-emptybx
+    role: hf-noise-control
+    year: 2023
+    status: validated_exists_on_lxplus
+    skim: /eos/cms/store/group/phys_heavyions/wangj/Forest2023PbPb/Dzero_260212-hfle_HiForest_260218_HIEmptyBX_HIRun2023A_PromptReco_v2.root
+    forests: /eos/cms/store/group/phys_heavyions/wangj/Forest2023PbPb/forest/crab_HiForest_260218_HIEmptyBX_HIRun2023A_PromptReco_v2/260219_210631/0000
+  - id: control-2023-zerobias
+    role: zero-bias-control
+    year: 2023
+    status: validated_exists_on_lxplus
+    skim: /eos/cms/store/group/phys_heavyions/wangj/Forest2023PbPb/Dzero_260212-hfle_HiForest_260218_HIPhysicsRawPrime0-5_HIRun2023A_ZB_374970.root
+    forests: /eos/cms/store/group/phys_heavyions/wangj/Forest2023PbPb/forest/crab_HiForest_260218_HIPhysicsRawPrime*_HIRun2023A_ZB_374970/*/0000
+  - id: mc-2024-prompt-gnucleus-d0
+    role: prompt-signal-mc
+    year: 2024
+    status: official_model_matched_gen_smoke_done_reference_skim_validated_exists_xrootd_forest_not_validated_reproduction_required
+    mcm_request: HIN-HINPbPbWinter24UPCGS-00001
+    mcm_snapshot: research/cms-d0-analysis/output/mcm/HIN-HINPbPbWinter24UPCGS-00001.json
+    cmssw_release: CMSSW_14_1_7
+    scram_arch: el9_amd64_gcc12
+    official_fragment: work/cms-official-mc/python/PromptGNucleusToD0PhotonBeamA_5362GeV_pythia8_evtgen_cfi.py
+    official_filter_efficiency: 0.007
+    skim: /eos/cms/store/group/phys_heavyions/wangj/Forest2024PbPb/Dzero_260212-hfle_HiForest_260218_prompt_GNucleusToD0-PhotonBeamA_Bin-Pthat0_Kpi_t2.root
+    forests: root://xrootd-vanderbilt.sites.opensciencegrid.org//store/user/wangj/prompt-GNucleusToD0-PhotonBeamA_Bin-Pthat0_Fil-Kpi_UPC_5p36TeV_pythia8-evtgen/crab_HiForest_260218_prompt_GNucleusToD0-PhotonBeamA_Bin-Pthat0_Kpi_t2/260218_200449
+    miniaod: /prompt-GNucleusToD0-PhotonBeamA_Bin-Pthat0_Fil-Kpi_UPC_5p36TeV_pythia8-evtgen/HINPbPbWinter24MiniAOD-NoPU_UPC_UPC_141X_mcRun3_2024_realistic_HI_v14-v2/MINIAODSIM
+    reproduction_gate: reproduce or independently validate MC foresting, matching, candidate production, skim reduction, weights, and efficiency extraction
+  - id: mc-2024-nonprompt-gnucleus-d0
+    role: nonprompt-signal-mc
+    year: 2024
+    status: official_model_matched_init_smoke_done_reference_reproduction_required
+    mcm_request: HIN-HINPbPbWinter24UPCGS-00003
+    mcm_snapshot: research/cms-d0-analysis/output/mcm/HIN-HINPbPbWinter24UPCGS-00003.json
+    cmssw_release: CMSSW_14_1_7
+    scram_arch: el9_amd64_gcc12
+    official_fragment: work/cms-official-mc/python/NonpromptGNucleusToD0PhotonBeamA_5362GeV_pythia8_evtgen_cfi.py
+    official_filter_efficiencies: [0.008, 0.000136]
+    miniaod: /nonprompt-GNucleusToD0-PhotonBeamA_Bin-Pthat0_Fil-Kpi_UPC_5p36TeV_pythia8-evtgen/HINPbPbWinter24MiniAOD-NoPU_UPC_UPC_141X_mcRun3_2024_realistic_HI_v14-v2/MINIAODSIM
+    reproduction_gate: validate if nonprompt enters yield correction, background, or efficiency studies
+runs:
+  - id: run-510
+    year: 2026
+    run_number: 510
+    status: prior-context
+    notes: Prior seven-run 2026 comparison context.
+  - id: run-511
+    year: 2026
+    run_number: 511
+    status: prior-context
+    notes: Prior seven-run 2026 comparison context.
+  - id: run-523
+    year: 2026
+    run_number: 523
+    status: prior-context
+    notes: Prior seven-run 2026 comparison context.
+  - id: run-527
+    year: 2026
+    run_number: 527
+    status: prior-context
+    notes: Prior seven-run 2026 comparison context.
+  - id: run-529
+    year: 2026
+    run_number: 529
+    status: prior-context
+    notes: Prior seven-run 2026 comparison context.
+  - id: run-543
+    year: 2026
+    run_number: 543
+    status: prior-context
+    notes: Prior seven-run 2026 comparison context.
+  - id: run-549
+    year: 2026
+    run_number: 549
+    status: prior-context
+    notes: Prior seven-run 2026 comparison context.
+outputs:
+  plots_dir: research/cms-d0-analysis/plots
+  supervisor_summary: research/cms-d0-analysis/SUPERVISOR_SUMMARY.md
+  gallery: research/cms-d0-analysis/PLOTS.md
+  first_2023_mass_peak:
+    status: first_pass_done_reference_skim_only
+    lxplus_manifest: /afs/cern.ch/work/e/evzhang/codex-work/analysis/d0-reproduction/manifests/first_mass_peak_2023.md
+    lxplus_script: /afs/cern.ch/work/e/evzhang/codex-work/analysis/d0-reproduction/scripts/run_2023_mass_peak.sh
+    eos_output_dir: /eos/user/e/evzhang/codex-eos/outputs/d0-reproduction/first-mass-peak-2023
+    input: /eos/cms/store/group/phys_heavyions/wangj/Forest2023PbPb/Dzero_260212-hfle_2023PbPbUPC_Jan2024ReReco_20260212Forest_HIForward_Drej-pasor_Trig-4_isL1ZDCOr_microt.root
+    main_cut: Dpt>2 && Dpt<12 && abs(Dy)<2 && DpassCut23PAS
+    fit_mean_gev: 1.86400522698
+    fit_sigma_gev: 0.0128314303572
+    caveat: validates skim-level plotting only; upstream skim/forest/MINIAOD chain remains to reproduce
+  recreated_2023_hiforward0_selected_skim:
+    status: first_pass_done_analysis_shaped_selected_skim
+    lxplus_manifest: /afs/cern.ch/work/e/evzhang/codex-work/analysis/d0-reproduction/manifests/recreated_selected_skim_2023_hiForward0_27files_selected_first_pass.md
+    lxplus_script: /afs/cern.ch/work/e/evzhang/codex-work/analysis/d0-reproduction/scripts/run_2023_d0_selected_skim.sh
+    eos_output_dir: /eos/user/e/evzhang/codex-eos/outputs/d0-reproduction/recreated-selected-skim-2023/hiForward0_27files_selected_first_pass
+    input_dir: /eos/user/e/evzhang/codex-eos/datasets/vanderbilt_HIForward0_251227_162520_0000_0006
+    input_files: 27
+    input_events: 9597325
+    section5_selected_events: 5769934
+    section5_candidates: 9843575
+    section7_selected_candidates: 1348
+    selected_mass_entries_1p70_2p05: 1125
+    selected_mass_max_bin_center_gev: 1.85925
+    caveat: analysis-shaped SelectedD skim only; exact Wang Tree branch clone still pending
+  produced_skim_d0_peak_2023_hiforward0_first_pass:
+    status: done_first_pass_selected_skim_plotting
+    lxplus_script: /afs/cern.ch/work/e/evzhang/codex-work/analysis/d0-reproduction/scripts/run_produced_skim_d0_peak.sh
+    lxplus_macro: /afs/cern.ch/work/e/evzhang/codex-work/analysis/d0-reproduction/scripts/make_produced_skim_d0_peak.C
+    input: /eos/user/e/evzhang/codex-eos/outputs/d0-reproduction/recreated-selected-skim-2023/hiForward0_27files_selected_first_pass/section7_d_selected.root
+    eos_output_dir: /eos/user/e/evzhang/codex-eos/outputs/d0-reproduction/produced-skim-d0-peak-2023/hiForward0_27files_selected_first_pass
+    tree: SelectedD
+    total_tree_entries: 1348
+    selected_entries_1p70_2p05_2pt12_absy2: 1125
+    simple_fit_mean_gev: 1.86180675625
+    simple_fit_sigma_gev: 0.0102114786954
+    caveat: diagnostic plotting fit on small HIForward0 first-pass subset; not a final yield extraction
+  recreated_2023_miniaod_forest_smoke:
+    status: bounded_smoke_done_core_schema_passed
+    lxplus_script: /afs/cern.ch/work/e/evzhang/codex-work/analysis/d0-reproduction/scripts/run_2023_forest_smoke.sh
+    lxplus_schema_validator: /afs/cern.ch/work/e/evzhang/codex-work/analysis/d0-reproduction/scripts/validate_recreated_forest_schema.C
+    cmssw_src: /afs/cern.ch/user/e/evzhang/Foresting/CMSSW_16_1_1/src
+    base_config: /afs/cern.ch/user/e/evzhang/Foresting/CMSSW_16_1_1/src/HIForestSetupPbPbRun2025/forest_CMSSWConfig_Run3_132X_2023PbPb_Jan2024ReReco_UPC_MITHIG.py
+    input: root://xrootd-vanderbilt.sites.opensciencegrid.org//store/hidata/HIRun2023A/HIForward0/MINIAOD/16Jan2024-v1/2810000/3cb20bb5-a7b1-43a2-8025-9807f4f51e71.root
+    output_100: /eos/user/e/evzhang/codex-eos/outputs/d0-reproduction/recreated-forest-2023/smoke/hiforward0_miniaod_100_d0_zdc_pf_track_hcalsev/HiForest_2023PbPbUPC_Jan24Reco_smoke.root
+    selected_events_100_input: 10
+    d0_nonzero_events_100_input: 7
+    d0_candidates_100_input: 1533
+    core_schema_reference: /eos/user/e/evzhang/codex-eos/datasets/vanderbilt_HIForward0_251227_162520_0000_0006/vanderbilt_HIForward0_251227_162520_0000_0006_batch001.root
+    compatibility_patches:
+      - replace missing ZDCAnalyzersHC2023_cff with available ZDCAnalyzersPbPb_cff
+      - replace zdcSequence/zdcreco2023HardCode with zdcSequencePbPb/zdcrecoRun3
+      - load RecoLocalCalo.HcalRecAlgos.hcalRecAlgoESProd_cfi for HcalSeverityLevelComputerRcd
+      - disable PF jet tree in bounded smoke because jets are not needed for D0/ZDC/HF validation and the current checkout has a jet analyzer tracked/untracked mismatch
+      - stage empty inst_lumi.json for smoke only
+    caveat: validates important Dfinder/ZDC/PF/HF/event/track branches and candidate filling from one MINIAOD file; full HIForward production, exact lumi JSON, and CRAB-scale running still need approval and validation
+  recreated_2023_miniaod_vs_official_forest:
+    status: d0_matched_event_cutflow_passes_zdc_event_filter_not_exact
+    official_shard: root://xrootd-vanderbilt.sites.opensciencegrid.org//store/user/jdlang/Run3_PbPbUPC/Forest_2023_Jan2024ReReco_2025Reforest/HIForward0/crab_2023PbPbUPC_Jan2024ReReco_20260212Forest_HIForward0/260212_170406/0000/HiForest_2023PbPbUPC_Jan24Reco_428.root
+    recreated_best: /eos/user/e/evzhang/codex-eos/outputs/d0-reproduction/recreated-forest-2023/smoke/hiforward0_miniaod_100_d0_zdc_hc2023_filtersource/HiForest_2023PbPbUPC_Jan24Reco_smoke.root
+    eos_output_dir: /eos/user/e/evzhang/codex-eos/outputs/d0-reproduction/recreated-vs-official-forest/hiforward0_miniaod100_hc2023_vs_official_428
+    lxplus_runner: /afs/cern.ch/work/e/evzhang/codex-work/analysis/d0-reproduction/scripts/run_recreated_vs_official_forest_validation.sh
+    lxplus_match_macro: /afs/cern.ch/work/e/evzhang/codex-work/analysis/d0-reproduction/scripts/find_official_forest_events.C
+    lxplus_compare_macro: /afs/cern.ch/work/e/evzhang/codex-work/analysis/d0-reproduction/scripts/compare_two_d0_forests_same_events.C
+    matched_events: 10
+    extra_recreated_event: "375055:61:10988872"
+    dsize_mismatches: 0
+    stage_counts_match: true
+    all_candidates_matched_events: 1486
+    mass_window_candidates_matched_events: 733
+    final_no_mass_window_candidates_matched_events: 2
+    zdc_blocker: official ZDC sums differ strongly from available local CMSSW_16 Run3/PbPb modes; native CMSSW_13 producer expects legacy ZDCDataFrame and cannot run on this MINIAOD without the official Run3 ZDC backport/PSet
+    general_output_commit: ed5cf1f
+  from_miniaod_fullfile_mass_chain_2026_06_16:
+    status: full_first_miniaod_file_chain_done_smoke_peak_sparse
+    label: hiforward0_miniaod_fullfile_fromscratch_chain_20260616
+    local_wrapper: research/cms-d0-analysis/scripts/run_from_miniaod_mass_chain.sh
+    input_miniaod: root://xrootd-vanderbilt.sites.opensciencegrid.org//store/hidata/HIRun2023A/HIForward0/MINIAOD/16Jan2024-v1/2810000/3cb20bb5-a7b1-43a2-8025-9807f4f51e71.root
+    official_validation_shard: root://xrootd-vanderbilt.sites.opensciencegrid.org//store/user/jdlang/Run3_PbPbUPC/Forest_2023_Jan2024ReReco_2025Reforest/HIForward0/crab_2023PbPbUPC_Jan2024ReReco_20260212Forest_HIForward0/260212_170406/0000/HiForest_2023PbPbUPC_Jan24Reco_428.root
+    recreated_forest: /eos/user/e/evzhang/codex-eos/outputs/d0-reproduction/from-miniaod-chain/recreated-forest/hiforward0_miniaod_fullfile_fromscratch_chain_20260616/HiForest_2023PbPbUPC_Jan24Reco_smoke.root
+    validation_dir: /eos/user/e/evzhang/codex-eos/outputs/d0-reproduction/from-miniaod-chain/validation/hiforward0_miniaod_fullfile_fromscratch_chain_20260616_vs_official
+    selected_skim: /eos/user/e/evzhang/codex-eos/outputs/d0-reproduction/from-miniaod-chain/selected-skim/hiforward0_miniaod_fullfile_fromscratch_chain_20260616_selected/section7_d_selected.root
+    mass_output_dir: /eos/user/e/evzhang/codex-eos/outputs/d0-reproduction/from-miniaod-chain/mass-peak/hiforward0_miniaod_fullfile_fromscratch_chain_20260616_selected
+    diagnostics_dir: /eos/user/e/evzhang/codex-eos/outputs/d0-reproduction/from-miniaod-chain/diagnostics/hiforward0_miniaod_fullfile_fromscratch_chain_20260616
+    miniaod_records_processed: 869201
+    recreated_forest_events: 36760
+    official_matched_events: 6326
+    validation_dsize_mismatches: 2
+    validation_same_index_candidate_diffs: 2491
+    validation_candidate_multiset_mismatches: 865
+    validation_final_no_mass_recreated: 87
+    validation_final_no_mass_official: 87
+    section5_selected_events: 11909
+    candidates_in_section5_events: 65347
+    section7_selected_candidates: 10
+    plotted_mass_window_candidates: 8
+    diagnostic_mass_window_all_events: 1163
+    diagnostic_mass_window_after_zdc_xor: 556
+    diagnostic_mass_window_after_hf_gap: 10
+    caveat: one MINIAOD file validates the chain but is too sparse after ZDC/HF cuts for a real signal peak; run multi-file batch or CRAB-style production next
+  from_miniaod_fullfile_zdc_offline2023_mass_chain_2026_06_18:
+    status: full_first_miniaod_file_chain_done_d_candidate_cutflow_matches_zdc_near_exact_peak_sparse
+    label: hiforward0_miniaod_fullfile_zdc_offline2023_chain_20260618
+    local_wrapper: research/cms-d0-analysis/scripts/run_from_miniaod_mass_chain.sh
+    input_miniaod: root://xrootd-vanderbilt.sites.opensciencegrid.org//store/hidata/HIRun2023A/HIForward0/MINIAOD/16Jan2024-v1/2810000/3cb20bb5-a7b1-43a2-8025-9807f4f51e71.root
+    official_validation_shard: root://xrootd-vanderbilt.sites.opensciencegrid.org//store/user/jdlang/Run3_PbPbUPC/Forest_2023_Jan2024ReReco_2025Reforest/HIForward0/crab_2023PbPbUPC_Jan2024ReReco_20260212Forest_HIForward0/260212_170406/0000/HiForest_2023PbPbUPC_Jan24Reco_428.root
+    recreated_forest: /eos/user/e/evzhang/codex-eos/outputs/d0-reproduction/from-miniaod-chain/recreated-forest/hiforward0_miniaod_fullfile_zdc_offline2023_chain_20260618/HiForest_2023PbPbUPC_Jan24Reco_smoke.root
+    validation_dir: /eos/user/e/evzhang/codex-eos/outputs/d0-reproduction/from-miniaod-chain/validation/hiforward0_miniaod_fullfile_zdc_offline2023_chain_20260618_vs_official
+    zdc_validation_dir: /eos/user/e/evzhang/codex-eos/outputs/d0-reproduction/zdc-same-event/hiforward0_fullfile_zdc_offline2023_vs_official428
+    selected_skim: /eos/user/e/evzhang/codex-eos/outputs/d0-reproduction/from-miniaod-chain/selected-skim/hiforward0_miniaod_fullfile_zdc_offline2023_chain_20260618_selected/section7_d_selected.root
+    mass_output_dir: /eos/user/e/evzhang/codex-eos/outputs/d0-reproduction/from-miniaod-chain/mass-peak/hiforward0_miniaod_fullfile_zdc_offline2023_chain_20260618_selected
+    miniaod_records_processed: 869201
+    recreated_forest_events: 36760
+    official_matched_events: 6326
+    validation_dsize_mismatches: 2
+    validation_same_index_candidate_diffs: 2491
+    validation_candidate_multiset_mismatches: 865
+    validation_stage04_through_final_match: true
+    validation_final_no_mass_recreated: 87
+    validation_final_no_mass_official: 87
+    zdc_exact_rechit_sums_matched: 0
+    zdc_exact_digi_sums_matched: 0
+    zdc_lt_or_1500_agreement: "6318/6326"
+    zdc_nominal_0nXn_agreement: "6314/6326"
+    section5_selected_events: 19477
+    candidates_in_section5_events: 127032
+    section7_selected_candidates: 21
+    plotted_mass_window_candidates: 17
+    simple_fit_mean_gev: 1.85723591471
+    simple_fit_sigma_gev: 0.00400000000014
+    general_output_data_dir: repos/general-codex-output/data/miniaod_chain
+    caveat: functional one-file chain with excellent D-candidate AN cutflow closure; ZDC absolute sums still have a side-dependent threshold-edge calibration residual, so do not claim exact official forest reproduction until the official 2023 ZDC gain/backport source is identified
+  pythia_d0_smoke:
+    status: working_standalone_and_cmssw_gen_smoke
+    notes: research/cms-d0-analysis/PYTHIA_MC.md
+    lxplus_script: /afs/cern.ch/work/e/evzhang/codex-work/analysis/d0-reproduction/scripts/run_pythia_d0_smoke.sh
+    template_dir: /afs/cern.ch/work/e/evzhang/codex-work/analysis/d0-reproduction/mc/pythia
+    cmssw_package: /afs/cern.ch/user/e/evzhang/Foresting/CMSSW_16_1_1/src/EvanAnalysis/D0PythiaMC
+    cmssw_fragment: /afs/cern.ch/user/e/evzhang/Foresting/CMSSW_16_1_1/src/EvanAnalysis/D0PythiaMC/python/D0Kpi_5362GeV_TuneCP5_pythia8_cfi.py
+    output_dir: /eos/user/e/evzhang/codex-eos/outputs/d0-reproduction/pythia-d0-smoke/cmssw_gen_smoke_100_10
+    pythia8_version: "8.317"
+    process: pp HardQCD hardccbar at sqrt(s)=5.362 TeV with D0/anti-D0 forced to K pi
+    standalone_events: 100
+    standalone_d0_total: 113
+    standalone_d0_to_kpi: 113
+    standalone_d0_2pt12_absy2: 38
+    cmssw_gen_events: 10
+    cmssw_output: /eos/user/e/evzhang/codex-eos/outputs/d0-reproduction/pythia-d0-smoke/cmssw_gen_smoke_100_10/d0_pythia_gen.root
+    caveat: validates Pythia/CMSSW mechanics only; not the final UPC PbPb analysis MC model
+  official_mc_model:
+    status: prompt_gen_smoke_done_beama_beamb_detector_smoke_done_zdc_blocked
+    notes: research/cms-d0-analysis/MC_OFFICIAL_MODEL.md
+    helper: scripts/cms-official-mcctl
+    lxplus_fragment_dir: /afs/cern.ch/work/e/evzhang/codex-work/analysis/d0-reproduction/mc/official-model/python
+    cmssw_area: /afs/cern.ch/work/e/evzhang/codex-work/cmssw/CMSSW_14_1_7
+    prompt_smoke_output: /eos/user/e/evzhang/codex-eos/outputs/d0-reproduction/official-mc-smoke/prompt_gen_500
+    prompt_smoke_events_requested: 500
+    prompt_smoke_events_kept: 6
+    prompt_smoke_filter_efficiency_observed: 0.012
+    prompt_smoke_root: /eos/user/e/evzhang/codex-eos/outputs/d0-reproduction/official-mc-smoke/prompt_gen_500/prompt_gen_500.root
+    nonprompt_init_output: /eos/user/e/evzhang/codex-eos/outputs/d0-reproduction/official-mc-smoke/nonprompt_gen_1
+    detector_forest_smoke:
+      beamA_output: /eos/user/e/evzhang/codex-eos/outputs/d0-reproduction/official-mc-forest-smoke/prompt_miniaodsim_500_raw_detector
+      beamB_output: /eos/user/e/evzhang/codex-eos/outputs/d0-reproduction/official-mc-forest-smoke/prompt_beamb_miniaodsim_500_raw_detector
+      events_per_beam: 500
+      wrapper: /afs/cern.ch/work/e/evzhang/codex-work/analysis/d0-reproduction/scripts/run_2023_forest_smoke.sh
+      options: ["--global-tag 141X_mcRun3_2024_realistic_HI_v14", "--no-muons", "--no-superfilter"]
+      finding: ZDC sumPlus and sumMinus are zero for every checked BeamA and BeamB event; HF fills and flips direction as expected
+      cutoff_output: /eos/user/e/evzhang/codex-eos/outputs/d0-reproduction/mc-cut-validation/official_prompt_mc_beama_beamb_500_zdc_hf
+      general_output_commit: b6faa52
+    zdc_setting_matrix_2026_06_16:
+      status: done_settings_do_not_recover_zdc
+      output_dir: /eos/user/e/evzhang/codex-eos/outputs/d0-reproduction/zdc-setting-matrix/official_prompt_beama_50_20260616
+      local_summary: research/cms-d0-analysis/output/zdc_variant_summary_beama_50_20260616.tsv
+      input: root://cms-xrd-global.cern.ch//store/mc/HINPbPbWinter24MiniAOD/prompt-GNucleusToD0-PhotonBeamA_Bin-Pthat0_Fil-Kpi_UPC_5p36TeV_pythia8-evtgen/MINIAODSIM/NoPU_UPC_UPC_141X_mcRun3_2024_realistic_HI_v14-v2/120000/db419421-6011-4b1b-b074-fe8247bc69d4.root
+      variants: ["default", "pbpb-uncorrected", "pbpb-force-soi3"]
+      events_per_variant: 50
+      all_variants:
+        rechit_nonzero_events: 0
+        digi_nonempty_events: 0
+        max_zdc_sum: 0
+      independent_check: edmDumpEventContent sees only hcalDigis:ZDC; one-event HcalDigiDump prints no ZDC/QIE10 frames
+      finding: SOI/OOT-pileup correction settings cannot recover ZDC response because the checked MINIAODSIM ZDC digi collection is empty
+      general_output_commit: 64b2655
+    caveat: Official photonuclear MC validates generator/HF-direction behavior but cannot derive 1n ZDC thresholds unless a nonzero ZDC-response/neutron-breakup sample is introduced
+  cut_derivation_5m_2026_06_16:
+    status: bounded_scan_done_near_nominal_event_cuts_supported
+    lxplus_output_dir: /eos/user/e/evzhang/codex-eos/outputs/d0-reproduction/cut-derivation/prompt_mc_data_sideband_emptybx_5m_20260616
+    local_output_dir: research/cms-d0-analysis/output/cut-derivation/prompt_mc_data_sideband_emptybx_5m_20260616
+    remote_runner: /afs/cern.ch/work/e/evzhang/codex-work/analysis/d0-reproduction/scripts/run_2023_cut_derivation.sh
+    local_postprocessor: research/cms-d0-analysis/scripts/summarize_cut_derivation.py
+    max_entries_per_sample: 5000000
+    signal_mc: /eos/cms/store/group/phys_heavyions/wangj/Forest2024PbPb/Dzero_260212-hfle_HiForest_260218_prompt_GNucleusToD0-PhotonBeamA_Bin-Pthat0_Kpi_t2.root
+    data_sideband_sample: /eos/cms/store/group/phys_heavyions/wangj/Forest2023PbPb/Dzero_260212-hfle_2023PbPbUPC_Jan2024ReReco_20260212Forest_HIForward_Drej-pasor_Trig-4_isL1ZDCOr_microt.root
+    emptybx_control: /eos/cms/store/group/phys_heavyions/wangj/Forest2023PbPb/Dzero_260212-hfle_HiForest_260218_HIEmptyBX_HIRun2023A_PromptReco_v2.root
+    zdc_supported_choice: "plusThreshold=1100, minusThreshold=1000"
+    zdc_raw_best: "plusThreshold=1500, minusThreshold=1500"
+    zdc_nominal_data_retention: 0.964613
+    zdc_nominal_emptybx_fake: 0.0000946
+    hf_supported_choice: "hfPlusThreshold=9.2, hfMinusThreshold=8.6"
+    hf_raw_best: "hfPlusThreshold=15, hfMinusThreshold=15"
+    hf_nominal_data_retention: 0.929799
+    hf_nominal_emptybx_fake: 0.0000926
+    d_topology_usable_bins: 4
+    d_topology_low_sideband_bins: ["absy0to1_pt8to12", "absy1to2_pt8to12"]
+    general_output_commit: 52de232
+    caveat: bounded scan supports nominal-scale cuts but does not freeze final analysis cuts; full-statistics scan and final yield/systematics review still required
+  zdc_hf_cut_audit_2026_06_16:
+    status: detector_level_beama_beamb_check_done_zdc_blocked_hf_direction_validated
+    audit_script: research/cms-d0-analysis/scripts/audit_zdc_hf_cut_inputs.py
+    report: research/cms-d0-analysis/output/zdc_hf_cut_audit/README.md
+    event_threshold_table: research/cms-d0-analysis/output/zdc_hf_cut_audit/event_threshold_audit.tsv
+    mc_input_table: research/cms-d0-analysis/output/zdc_hf_cut_audit/mc_input_audit.tsv
+    finding: saved ZDC and HF event-threshold optima are edge-of-grid artifacts, not physics cuts
+    zdc_nominal_plus_minus: [1100, 1000]
+    zdc_saved_best_plus_minus: [1500, 1500]
+    hf_nominal_plus_minus: [9.2, 8.6]
+    hf_saved_best_plus_minus: [15, 15]
+    detector_level_followup: BeamA/BeamB official MINIAODSIM forests have all-zero ZDC sums; HF side flips as expected
+    next_gate: derive ZDC thresholds from data/EmptyBX plus validated ZDC calibration, or find a separate neutron-breakup/ZDC-response MC
+  zdc_1n_threshold_derivation_2026_06_17:
+    status: forest_level_data_driven_method_matches_an_thresholds
+    local_output_dir: research/cms-d0-analysis/output/zdc-1n-thresholds/zerobias_forest_emptybx_forest_5m_20260617
+    eos_output_dir: /eos/user/e/evzhang/codex-eos/outputs/d0-reproduction/zdc-1n-thresholds/zerobias_forest_emptybx_forest_5m_20260617
+    local_wrapper: research/cms-d0-analysis/scripts/run_zdc_1n_threshold_derivation.sh
+    local_macro: research/cms-d0-analysis/scripts/derive_zdc_1n_thresholds_data_driven.C
+    data_input: /eos/cms/store/group/phys_heavyions/wangj/Forest2023PbPb/forest/crab_HiForest_260218_HIPhysicsRawPrime*_HIRun2023A_ZB_374970/*/0000/*.root
+    emptybx_input: /eos/cms/store/group/phys_heavyions/wangj/Forest2023PbPb/forest/crab_HiForest_260218_HIEmptyBX_HIRun2023A_PromptReco_v2/260219_210631/0000/*.root
+    max_entries_per_sample: 5000000
+    forest_entries_read:
+      data: 2337421
+      emptybx: 4975028
+    fitted_1n_peaks:
+      plus: {mean: 2423.464654, sigma: 472.625069}
+      minus: {mean: 2646.168426, sigma: 713.538798}
+    recommended_rule: lowest threshold with local fitted-1n/EmptyBX >= 2, integrated EmptyBX tail <= 5e-5, and fitted 1n efficiency >= 97.5%, rounded to nearest 100 GeV
+    recommended_raw_plus_minus: [1125, 1025]
+    recommended_rounded_plus_minus: [1100, 1000]
+    an_nominal_plus_minus: [1100, 1000]
+    diagnostic_mu_minus_2sigma_plus_minus: [1478.214516, 1219.090829]
+    caveat: empirical EmptyBX tail is around 5e-5 in this forest branch, while AN text quotes a smaller EmptyBX probability; confirm exact branch/calibration/OOTPU recipe before final fake-rate claim
+  hf_gap_cutoff_derivation_2026_06_18:
+    status: full_stat_blind_data_mc_method_done_an_point_on_plateau
+    local_macro: research/cms-d0-analysis/scripts/derive_hf_gap_cutoffs_data_mc.C
+    lxplus_macro: /afs/cern.ch/work/e/evzhang/codex-work/analysis/d0-reproduction/scripts/derive_hf_gap_cutoffs_data_mc.C
+    local_output_dir: research/cms-d0-analysis/output/cut-derivation/hf_gap_data_mc_full_blind_20260618
+    eos_output_dir: /eos/user/e/evzhang/codex-eos/outputs/d0-reproduction/cut-derivation/hf_gap_data_mc_full_blind_20260618
+    previous_an_compatible_output_dir: research/cms-d0-analysis/output/cut-derivation/hf_gap_data_mc_full_20260618
+    prompt_mc: /eos/cms/store/group/phys_heavyions/wangj/Forest2024PbPb/Dzero_260212-hfle_HiForest_260218_prompt_GNucleusToD0-PhotonBeamA_Bin-Pthat0_Kpi_t2.root
+    data: /eos/cms/store/group/phys_heavyions/wangj/Forest2023PbPb/Dzero_260212-hfle_2023PbPbUPC_Jan2024ReReco_20260212Forest_HIForward_Drej-pasor_Trig-4_isL1ZDCOr_microt.root
+    emptybx: /eos/cms/store/group/phys_heavyions/wangj/Forest2023PbPb/Dzero_260212-hfle_HiForest_260218_HIEmptyBX_HIRun2023A_PromptReco_v2.root
+    event_counts:
+      prompt_mc: {raw: 48043545, quality: 34042782, plus_gap: 34042782, minus_gap: 0}
+      data: {raw: 54386911, quality: 54037029, plus_gap: 26022478, minus_gap: 26109293}
+      emptybx: {raw: 16407534, quality: 16407534, plus_gap: 752, minus_gap: 741}
+    rule: blind first threshold with MC efficiency >= 0.989 when MC exists, data low-track pass >= 0.9765, and data high-track leakage <= 0.85; AN nominal values are posthoc markers only
+    blind_recommended_hf_plus_minus_gev: [9.1, 8.6]
+    an_nominal_hf_plus_minus_gev: [9.2, 8.6]
+    an_nominal_passes_same_rule: {plus: true, minus: true}
+    an_nominal_score_over_blind: {plus: 1.000170, minus: 0.0}
+    plus_metrics: {mc_efficiency: 0.989201, data_low_track_pass: 0.976551, data_high_track_leak: 0.649554, emptybx_pass: 0.987964}
+    minus_metrics: {mc_efficiency: 0.0, data_low_track_pass: 0.976925, data_high_track_leak: 0.651293, emptybx_pass: 0.989184}
+    caveat: prompt reduced MC has only plus-gap entries; minus threshold is data-driven with EmptyBX/noise validation until a same-side reduced MC gap sample is available; compare 9.1/8.6 and 9.2/8.6 as closure/systematic points before final signoff
+  selection_independence_audit_2026_06_18:
+    status: implemented_protocol_and_generated_audit
+    config: research/cms-d0-analysis/config/selection_independence.yaml
+    generator: research/cms-d0-analysis/scripts/audit_selection_independence.py
+    report: research/cms-d0-analysis/output/selection-independence/selection_independence_audit.md
+    table: research/cms-d0-analysis/output/selection-independence/selection_independence_audit.tsv
+    policy: AN constants cannot be used to freeze cuts; AN is allowed only for posthoc validation and closure/systematic comparisons
+    high_priority_remaining:
+      - alpha_dtheta_topology
+      - final_mass_fit_model
+      - trigger_selection
+  upstream_recreation_plan:
+    status: miniaod_forest_smoke_unblocked_bounded_validation_done
+    lxplus_plan: /afs/cern.ch/work/e/evzhang/codex-work/analysis/d0-reproduction/UPSTREAM_RECREATION_PLAN.md
+    lxplus_script: /afs/cern.ch/work/e/evzhang/codex-work/analysis/d0-reproduction/scripts/run_2023_forest_smoke.sh
+    earliest_inputs:
+      miniaod_pattern: /HIForward[0-19]/HIRun2023A-16Jan2024-v1/MINIAOD
+      run_range: "374804-375746"
+      golden_json: /eos/user/c/cmsdqm/www/CAF/certification/Collisions23HI/Cert_Collisions2023HI_374288_375823_Good_ZDC_Golden.json
+    source_commits:
+      hiforest_setup: 90900d08a2305fcd1eda1727506528e76eaa700c
+      bfinder: e22c60dd5165d58e7d68f90ad37c57ed4aa3b4b6
+    smoke_attempt:
+      label: hiforward0_miniaod_100_d0_zdc_pf_track_hcalsev
+      status: succeeded_core_schema_passed
+      output: /eos/user/e/evzhang/codex-eos/outputs/d0-reproduction/recreated-forest-2023/smoke/hiforward0_miniaod_100_d0_zdc_pf_track_hcalsev/HiForest_2023PbPbUPC_Jan24Reco_smoke.root
+      log: /afs/cern.ch/work/e/evzhang/codex-work/analysis/d0-reproduction/logs/run_2023_forest_smoke_hiforward0_miniaod_100_d0_zdc_pf_track_hcalsev_20260616T131207Z.log
+      selected_events: 10
+      total_d0_candidates: 1533
+      next_step: validate event/candidate-level agreement against the official forest on the same MINIAOD events before scaling production
+  cut_recreation_audit:
+    status: first_audit_done_not_final_derivation
+    lxplus_plan: /afs/cern.ch/work/e/evzhang/codex-work/analysis/d0-reproduction/CUT_RECREATION_PLAN.md
+    lxplus_script: /afs/cern.ch/work/e/evzhang/codex-work/analysis/d0-reproduction/scripts/run_2023_cut_recreation_audit.sh
+    lxplus_macro: /afs/cern.ch/work/e/evzhang/codex-work/analysis/d0-reproduction/scripts/audit_2023_cut_recreation.C
+    eos_output_dir: /eos/user/e/evzhang/codex-eos/outputs/d0-reproduction/cut-recreation-audits/hiForward0_27files_selected_first_pass
+    source_outputs:
+      section5: /eos/user/e/evzhang/codex-eos/outputs/d0-reproduction/recreated-selected-skim-2023/hiForward0_27files_selected_first_pass/section5_event_selected.root
+      section7: /eos/user/e/evzhang/codex-eos/outputs/d0-reproduction/recreated-selected-skim-2023/hiForward0_27files_selected_first_pass/section7_d_selected.root
+    section5_cutflow:
+      input_events: 9597325
+      after_hf_gap: 5769934
+    section7_cutflow:
+      input_candidates: 9843575
+      selected_candidates: 1348
+    caveat: audit of current nominal cuts and scans only; EBX/MC-backed independent derivation remains pending
+    validation_open_items:
+      - recover EBX data for ZDC/HF noise tails
+      - recover direct/resolved photonuclear MC for HF and D-cut efficiency scans
+      - fix or validate foresting environment for from-MINIAOD ZDC signal recreation
+      - resolve AN/code nVtx wording mismatch
+  cut_derivation_pipeline:
+    status: implemented_bounded_200k_scan_done_not_final
+    notes: research/cms-d0-analysis/CUT_DERIVATION.md
+    local_output_dir: research/cms-d0-analysis/output/cut-derivation/prompt_mc_data_sideband_emptybx_200k
+    lxplus_script: /afs/cern.ch/work/e/evzhang/codex-work/analysis/d0-reproduction/scripts/run_2023_cut_derivation.sh
+    lxplus_macro: /afs/cern.ch/work/e/evzhang/codex-work/analysis/d0-reproduction/scripts/derive_2023_d0_cuts.C
+    eos_output_dir: /eos/user/e/evzhang/codex-eos/outputs/d0-reproduction/cut-derivation/prompt_mc_data_sideband_emptybx_200k
+    inputs:
+      signal_mc: /eos/cms/store/group/phys_heavyions/wangj/Forest2024PbPb/Dzero_260212-hfle_HiForest_260218_prompt_GNucleusToD0-PhotonBeamA_Bin-Pthat0_Kpi_t2.root
+      data_sidebands: /eos/cms/store/group/phys_heavyions/wangj/Forest2023PbPb/Dzero_260212-hfle_2023PbPbUPC_Jan2024ReReco_20260212Forest_HIForward_Drej-pasor_Trig-4_isL1ZDCOr_microt.root
+      emptybx_control: /eos/cms/store/group/phys_heavyions/wangj/Forest2023PbPb/Dzero_260212-hfle_HiForest_260218_HIEmptyBX_HIRun2023A_PromptReco_v2.root
+      max_events_per_sample: 200000
+    event_threshold_nominal_rows:
+      zdc_xor_1100_1000:
+        data_retention: 0.961908
+        emptybx_fake_fraction: 0.00007
+      hf_gap_9p2_8p6:
+        data_retention: 0.926811
+        emptybx_fake_fraction: 0.00007
+    provisional_scan_optima:
+      zdc_xor:
+        plus_threshold: 1500
+        minus_threshold: 1500
+        data_retention: 0.962693
+        emptybx_fake_fraction: 0.000055
+      hf_gap:
+        plus_threshold: 15
+        minus_threshold: 15
+        data_retention: 0.946089
+        emptybx_fake_fraction: 0.00007
+    caveat: official prompt MC skim lacks usable ZDC sums, so event cuts are data-retention vs EBX-fake scans; D topology rows are low-sideband-stat bounded scans and must not be frozen
+  topological_cut_reproduction_2026_06_17:
+    status: full_stat_an_guided_rectangular_reproduction_done
+    signal_mc: /eos/cms/store/group/phys_heavyions/wangj/Forest2024PbPb/Dzero_260212-hfle_HiForest_260218_prompt_GNucleusToD0-PhotonBeamA_Bin-Pthat0_Kpi_t2.root
+    data_sidebands: /eos/cms/store/group/phys_heavyions/wangj/Forest2023PbPb/Dzero_260212-hfle_2023PbPbUPC_Jan2024ReReco_20260212Forest_HIForward_Drej-pasor_Trig-4_isL1ZDCOr_microt.root
+    sideband_definition: "0.07 < |Dmass - 1.86484| < 0.12 GeV"
+    macro_local: research/cms-d0-analysis/scripts/derive_2023_d0_topology_cuts_an_sideband.C
+    macro_lxplus: /afs/cern.ch/work/e/evzhang/codex-work/analysis/d0-reproduction/scripts/derive_2023_d0_topology_cuts_an_sideband.C
+    summarizer: research/cms-d0-analysis/scripts/summarize_topological_cut_scan.py
+    local_output_dir: research/cms-d0-analysis/output/cut-derivation/topocuts_rect_an_sideband_full_20260617
+    eos_output_dir: /eos/user/e/evzhang/codex-eos/outputs/d0-reproduction/cut-derivation/topocuts_rect_an_sideband_full_20260617
+    plot_grid: research/cms-d0-analysis/output/cut-derivation/topocuts_rect_an_sideband_full_20260617/topology_plots/topology_eff_vs_sideband_grid.png
+    result:
+      blind_score_reproduces_an: false
+      blind_score_note: blind score prefers looser DsvpvSig > 1.5 and Dchi2cl > 0.02 points
+      guided_reproduces_an: true
+      guided_rule: fix AN-motivated DsvpvSig floor by pT and Dchi2cl > 0.1, then accept alpha/dtheta choices on constrained score plateau
+      cuts:
+        absy0to1_pt2to5: {alphaMax: 0.40, svpvSigMin: 2.5, chi2clMin: 0.10, dthetaMax: 0.50, nominal_over_constrained_best: 0.932132}
+        absy0to1_pt5to8: {alphaMax: 0.35, svpvSigMin: 3.5, chi2clMin: 0.10, dthetaMax: 0.30, nominal_over_constrained_best: 0.996966}
+        absy0to1_pt8to12: {alphaMax: 0.40, svpvSigMin: 3.5, chi2clMin: 0.10, dthetaMax: 0.30, nominal_over_constrained_best: 0.989033}
+        absy1to2_pt2to5: {alphaMax: 0.20, svpvSigMin: 2.5, chi2clMin: 0.10, dthetaMax: 0.30, nominal_over_constrained_best: 0.885446}
+        absy1to2_pt5to8: {alphaMax: 0.25, svpvSigMin: 3.5, chi2clMin: 0.10, dthetaMax: 0.30, nominal_over_constrained_best: 0.984781}
+        absy1to2_pt8to12: {alphaMax: 0.25, svpvSigMin: 3.5, chi2clMin: 0.10, dthetaMax: 0.30, nominal_over_constrained_best: 0.979218}
+    caveat: current BDT cross-check not implemented; rectangular reproduction is preferred because the AN states BDT was not used as nominal due background-training/data-MC concerns
+  topological_cut_mc_background_discrepancy_check_2026_06_17:
+    status: full_stat_discrepancy_check_done
+    signal_mc: /eos/cms/store/group/phys_heavyions/wangj/Forest2024PbPb/Dzero_260212-hfle_HiForest_260218_prompt_GNucleusToD0-PhotonBeamA_Bin-Pthat0_Kpi_t2.root
+    background_source: non-truth-matched MC candidates in the AN mass sidebands
+    sideband_definition: "0.07 < |Dmass - 1.86484| < 0.12 GeV"
+    macro_local: research/cms-d0-analysis/scripts/derive_2023_d0_topology_cuts_mc_background.C
+    macro_lxplus: /afs/cern.ch/work/e/evzhang/codex-work/analysis/d0-reproduction/scripts/derive_2023_d0_topology_cuts_mc_background.C
+    summarizer: research/cms-d0-analysis/scripts/summarize_topological_cut_scan.py
+    local_output_dir: research/cms-d0-analysis/output/cut-derivation/topocuts_mc_background_full_20260617
+    eos_output_dir: /eos/user/e/evzhang/codex-eos/outputs/d0-reproduction/cut-derivation/topocuts_mc_background_full_20260617
+    result:
+      blind_score_reproduces_an: false
+      blind_score_note: blind score still prefers looser DsvpvSig > 1.5 and Dchi2cl > 0.02 points
+      background_swap_explains_discrepancy: false
+      guided_reproduces_an: true
+      guided_rule: fix AN-motivated DsvpvSig floor by pT and Dchi2cl > 0.1, then accept alpha/dtheta choices on constrained score plateau
+      nominal_over_constrained_best:
+        absy0to1_pt2to5: 0.970324
+        absy0to1_pt5to8: 0.996776
+        absy0to1_pt8to12: 0.997937
+        absy1to2_pt2to5: 0.923313
+        absy1to2_pt5to8: 0.994171
+        absy1to2_pt8to12: 0.998828
+    conclusion: the discrepancy is caused by using a blind scalar score without the AN-motivated vertex-displacement and vertex-fit floors, not by using data sidebands instead of nonmatched MC as the background proxy
+  topological_floor_justification_2026_06_18:
+    status: independent_floor_rule_matches_an_done
+    script: research/cms-d0-analysis/scripts/derive_topological_floor_justification.py
+    local_output_dir: research/cms-d0-analysis/output/cut-derivation/topological_floor_justification_20260618
+    inputs:
+      data_sideband_scan: research/cms-d0-analysis/output/cut-derivation/topocuts_rect_an_sideband_full_20260617/d_topology_scan.tsv
+      mc_background_scan: research/cms-d0-analysis/output/cut-derivation/topocuts_mc_background_full_20260617/d_topology_scan.tsv
+    selection_rule:
+      chi2: first floor with nonmatched-MC background rejection >= 0.04 and MC signal loss <= 0.06
+      svpv: first floor with nonmatched-MC background rejection >= one third, data-sideband rejection >= 0.18, and MC signal retention >= 0.55
+      alpha_dtheta: fixed at loose scan maxima while deriving floors
+    result:
+      matches_an_floors: true
+      matched_bins: 6
+      total_bins: 6
+      floors:
+        absy0to1_pt2to5: {svpvSigMin: 2.5, chi2clMin: 0.10, signal_retention: 0.634858, mc_background_rejection: 0.385953, data_background_rejection: 0.319940}
+        absy0to1_pt5to8: {svpvSigMin: 3.5, chi2clMin: 0.10, signal_retention: 0.609918, mc_background_rejection: 0.403866, data_background_rejection: 0.238709}
+        absy0to1_pt8to12: {svpvSigMin: 3.5, chi2clMin: 0.10, signal_retention: 0.679020, mc_background_rejection: 0.334257, data_background_rejection: 0.196078}
+        absy1to2_pt2to5: {svpvSigMin: 2.5, chi2clMin: 0.10, signal_retention: 0.643107, mc_background_rejection: 0.389726, data_background_rejection: 0.286288}
+        absy1to2_pt5to8: {svpvSigMin: 3.5, chi2clMin: 0.10, signal_retention: 0.591790, mc_background_rejection: 0.432753, data_background_rejection: 0.189782}
+        absy1to2_pt8to12: {svpvSigMin: 3.5, chi2clMin: 0.10, signal_retention: 0.662420, mc_background_rejection: 0.353616, data_background_rejection: 0.291667}
+    caveat: this justifies the floor values from scan behavior but still uses the AN sideband definition and compares against the AN as a validation target
+  topological_pointing_justification_2026_06_18:
+    status: blind_plateau_rule_accepts_an_pointing_rows
+    script: research/cms-d0-analysis/scripts/derive_topological_pointing_justification.py
+    local_output_dir: research/cms-d0-analysis/output/cut-derivation/topological_pointing_justification_20260618
+    inputs:
+      floor_derivation: research/cms-d0-analysis/output/cut-derivation/topological_floor_justification_20260618/floor_derivation.tsv
+      data_sideband_scan: research/cms-d0-analysis/output/cut-derivation/topocuts_rect_an_sideband_full_20260617/d_topology_scan.tsv
+      mc_background_scan: research/cms-d0-analysis/output/cut-derivation/topocuts_mc_background_full_20260617/d_topology_scan.tsv
+    plateau_rule:
+      signal_retention_loose_min: 0.80
+      joint_score_ratio_min: 0.90
+      background_condition: no statistically significant increase in either data-sideband or nonmatched-MC background proxy
+    result:
+      an_rows_accepted: true
+      accepted_bins: 6
+      total_bins: 6
+      validation_table: research/cms-d0-analysis/output/cut-derivation/topological_pointing_justification_20260618/pointing_an_validation.tsv
+      plot_grid: research/cms-d0-analysis/output/cut-derivation/topological_pointing_justification_20260618/pointing_plots/pointing_plateau_grid.png
+      an_row_metrics:
+        absy0to1_pt2to5: {alphaMax: 0.40, dthetaMax: 0.50, signal_retention: 0.948972, joint_score_ratio: 0.951036}
+        absy0to1_pt5to8: {alphaMax: 0.35, dthetaMax: 0.30, signal_retention: 0.984326, joint_score_ratio: 0.996871}
+        absy0to1_pt8to12: {alphaMax: 0.40, dthetaMax: 0.30, signal_retention: 0.998684, joint_score_ratio: 0.993475}
+        absy1to2_pt2to5: {alphaMax: 0.20, dthetaMax: 0.30, signal_retention: 0.809206, joint_score_ratio: 0.904182}
+        absy1to2_pt5to8: {alphaMax: 0.25, dthetaMax: 0.30, signal_retention: 0.983389, joint_score_ratio: 0.989465}
+        absy1to2_pt8to12: {alphaMax: 0.25, dthetaMax: 0.30, signal_retention: 0.997976, joint_score_ratio: 0.988974}
+    caveat: proves AN pointing rows are inside a predeclared stable plateau, not that they are unique; still uses AN sideband definition, so repeat after independent sideband derivation
+  topology_sideband_derivation_2026_06_18:
+    status: independent_resolution_rule_matches_an_sideband_done
+    local_macro: research/cms-d0-analysis/scripts/derive_d0_topology_sidebands.C
+    local_wrapper: research/cms-d0-analysis/scripts/run_independent_sideband_topology_derivation.sh
+    local_output_dir: research/cms-d0-analysis/output/cut-derivation/topology_sideband_derivation_20260618
+    eos_output_dir: /eos/user/e/evzhang/codex-eos/outputs/d0-reproduction/cut-derivation/topology_sideband_derivation_20260618
+    signal_mc: /eos/cms/store/group/phys_heavyions/wangj/Forest2024PbPb/Dzero_260212-hfle_HiForest_260218_prompt_GNucleusToD0-PhotonBeamA_Bin-Pthat0_Kpi_t2.root
+    data: /eos/cms/store/group/phys_heavyions/wangj/Forest2023PbPb/Dzero_260212-hfle_2023PbPbUPC_Jan2024ReReco_20260212Forest_HIForward_Drej-pasor_Trig-4_isL1ZDCOr_microt.root
+    rule: worst-bin MC truth-matched sigma68 sideband, inner=round(3*sigma_max/10MeV)*10MeV and outer=round(5*sigma_max/10MeV)*10MeV
+    worst_bin_sigma68_mev: 23.96
+    derived_sideband_abs_dm_gev: [0.07, 0.12]
+    an_sideband_abs_dm_gev: [0.07, 0.12]
+    matches_an_posthoc: true
+    max_mc_signal_leakage_fraction: 0.03570
+    max_data_upper_lower_count_asymmetry: 0.352
+    caveat: sideband rule is independently defined, but final yield extraction still needs sideband-variation and mass-fit systematics
+  topological_cuts_independent_sideband_2026_06_18:
+    status: sideband_and_floors_independent_pointing_plateau_accepts_an
+    wrapper: research/cms-d0-analysis/scripts/run_independent_sideband_topology_derivation.sh
+    manifest: research/cms-d0-analysis/output/cut-derivation/topology_independent_sideband_20260618_manifest.md
+    data_sideband_scan: research/cms-d0-analysis/output/cut-derivation/topocuts_rect_independent_sideband_full_20260618/d_topology_scan.tsv
+    mc_background_scan: research/cms-d0-analysis/output/cut-derivation/topocuts_mc_background_independent_sideband_full_20260618/d_topology_scan.tsv
+    floor_output_dir: research/cms-d0-analysis/output/cut-derivation/topological_floor_independent_sideband_20260618
+    pointing_output_dir: research/cms-d0-analysis/output/cut-derivation/topological_pointing_independent_sideband_20260618
+    derived_sideband_abs_dm_gev: [0.07, 0.12]
+    floor_rule_matches_an: {matched_bins: 6, total_bins: 6}
+    an_pointing_rows_accepted_by_plateau: {accepted_bins: 6, total_bins: 6}
+    representative_pointing_rows:
+      source: research/cms-d0-analysis/output/cut-derivation/topological_pointing_independent_sideband_20260618/pointing_rederived_representative.tsv
+      rule: accepted plateau row with signal retention >= 0.94 times best accepted retention, then max data+MC background rejection
+      matches_an_pointing_bins: 1
+      total_bins: 6
+    caveat: exact AN pointing rows are plateau-compatible, not uniquely derived; freeze nominal pointing tie-break before final yield extraction
+  topological_pointing_closure_2026_06_18:
+    status: neighboring_plateau_mass_yield_closure_passed
+    local_wrapper: research/cms-d0-analysis/scripts/run_topological_pointing_closure.sh
+    local_controller: research/cms-d0-analysis/scripts/derive_topological_pointing_closure.py
+    lxplus_macro: research/cms-d0-analysis/scripts/check_topological_pointing_closure.C
+    local_output_dir: research/cms-d0-analysis/output/cut-derivation/topological_pointing_closure_20260618
+    eos_output_dir: /eos/user/e/evzhang/codex-eos/outputs/d0-reproduction/cut-derivation/topological_pointing_closure_20260618
+    inputs:
+      data_skim: /eos/cms/store/group/phys_heavyions/wangj/Forest2023PbPb/Dzero_260212-hfle_2023PbPbUPC_Jan2024ReReco_20260212Forest_HIForward_Drej-pasor_Trig-4_isL1ZDCOr_microt.root
+      closure_points: research/cms-d0-analysis/output/cut-derivation/topological_pointing_closure_20260618/closure_points.tsv
+      plateau_candidates: research/cms-d0-analysis/output/cut-derivation/topological_pointing_justification_20260618/pointing_plateau_candidates.tsv
+      signal_efficiencies: research/cms-d0-analysis/output/cut-derivation/topocuts_rect_an_sideband_full_20260617/d_topology_scan.tsv
+    fixed_cuts:
+      zdc_thresholds: {plus_lt: 1100, minus_lt: 1000}
+      hf_thresholds: {plus_lt: 9.2, minus_lt: 8.6}
+      mass_window: {low: 1.84, high: 1.89}
+      sidebands: "AN sidebands around D0 mass: 0.07 < |Dmass - 1.86484| < 0.12"
+    closure_rule:
+      neighboring_points: accepted plateau points within grid distance <= 2 from each AN row, capped at 10 per bin
+      corrected_yield: sideband-subtracted mass-window yield divided by frozen MC signal efficiency
+      compatibility: corrected-yield shift within 2 sigma or within 15 percent of the AN row
+    result:
+      closure_passed_bins: 6
+      total_bins: 6
+      scanned_events: 54386911
+      quality_events: 54037029
+      zdc_hf_gap_events: 50245289
+      summary_table: research/cms-d0-analysis/output/cut-derivation/topological_pointing_closure_20260618/pointing_closure_summary.tsv
+      ratio_table: research/cms-d0-analysis/output/cut-derivation/topological_pointing_closure_20260618/pointing_closure_ratios.tsv
+      corrected_yield_plot: research/cms-d0-analysis/output/cut-derivation/topological_pointing_closure_20260618/closure_plots/corrected_yield_ratio_grid.png
+      mass_overlay_plot: research/cms-d0-analysis/output/cut-derivation/topological_pointing_closure_20260618/closure_plots/mass_overlay_grid.png
+      max_corrected_yield_shift_by_bin:
+        absy0to1_pt2to5: 0.0983249
+        absy0to1_pt5to8: 0.0280744
+        absy0to1_pt8to12: 0.0378996
+        absy1to2_pt2to5: 0.123272
+        absy1to2_pt5to8: 0.0480161
+        absy1to2_pt8to12: 0.0600086
+    caveat: diagnostic closure only; final AN yield extraction still needs independent sideband definition and blinded mass-fit model selection
+  minimal_modern_cmssw_forest:
+    status: prototype_builds_2023_compare_done
+    cmssw_src: /afs/cern.ch/user/e/evzhang/Foresting/CMSSW_16_1_1/src
+    package: /afs/cern.ch/user/e/evzhang/Foresting/CMSSW_16_1_1/src/EvanAnalysis/D0MinimalForest
+    wrapper: /afs/cern.ch/work/e/evzhang/codex-work/analysis/d0-reproduction/scripts/run_d0_minimal_forest_smoke.sh
+    compare_wrapper: /afs/cern.ch/work/e/evzhang/codex-work/analysis/d0-reproduction/scripts/run_2023_minimal_forest_compare.sh
+    compare_macro: /afs/cern.ch/work/e/evzhang/codex-work/analysis/d0-reproduction/scripts/compare_d0_minimal_to_dfinder.C
+    output_tree: d0MinimalForest/d0minimal
+    inputs:
+      pf_candidates: packedPFCandidates
+      vertices: offlineSlimmedPrimaryVertices
+    branches_include:
+      - run/lumi/event
+      - primary-vertex coordinates
+      - packed-candidate HF Emax proxies
+      - Kpi and piK invariant-mass hypotheses
+      - daughter packed-candidate kinematics/charge/pdgId/highPurity/ptError
+    mass_hypothesis_note: packed-candidate pdgId is not validated K/pi PID; store both Kpi and piK hypotheses
+    smoke_test:
+      input: root://eoscms.cern.ch//store/hidata/HIRun2026A/HIForward0/MINIAOD/PromptReco-v1/000/404/474/00000/126fe461-c885-48bb-bca8-63f64da479cb.root
+      max_events: 10
+      output: /eos/user/e/evzhang/codex-eos/outputs/d0-reproduction/minimal-forest-smoke/d0_minimal_forest_2026_prompt_hiForward0_clean_exit_10.root
+      entries: 10
+      total_charged_tracks_used: 0
+      total_d0_candidates: 0
+      caveat: validates plugin/build/output only; candidate filling needs a 2023 or MC MINIAOD file with central tracks
+    comparison_2023_10k:
+      input: root://xrootd-vanderbilt.sites.opensciencegrid.org//store/hidata/HIRun2023A/HIForward0/MINIAOD/16Jan2024-v1/2810000/3cb20bb5-a7b1-43a2-8025-9807f4f51e71.root
+      max_events: 10000
+      output_dir: /eos/user/e/evzhang/codex-eos/outputs/d0-reproduction/minimal-forest-2023-compare/hiforward0_2023_vanderbilt_config_10000
+      minimal_total_candidates: 647696
+      minimal_raw_kinematic_candidates: 55324
+      minimal_baseline_candidates: 9409
+      dfinder_reference_entries: 54386911
+      dfinder_matched_events: 19
+      dfinder_matched_selected_candidates: 0
+      dfinder_full_selected_candidates: 49781
+      caveat: exact overlap with selected Dfinder skim is too sparse for event-by-event validation; current result is raw-combinatoric shape/context only
+    missing_features_vs_dfinder:
+      - D0 secondary vertex fit
+      - decay length and significance
+      - pointing angle/topological cuts
+      - trigger/filter bit packing
+      - validated ZDC rechit/digi branches
+  dfinder_following_candidate_bridge:
+    status: candidate_producer_bridge_done_event_filter_gap_open
+    cmssw_src: /afs/cern.ch/user/e/evzhang/Foresting/CMSSW_16_1_1/src
+    config: /afs/cern.ch/work/e/evzhang/codex-work/analysis/d0-reproduction/scripts/run_2023_d0_dfinder_only_cfg.py
+    wrapper: /afs/cern.ch/work/e/evzhang/codex-work/analysis/d0-reproduction/scripts/run_2023_d0_dfinder_following.sh
+    compare_macro: /afs/cern.ch/work/e/evzhang/codex-work/analysis/d0-reproduction/scripts/compare_2023_d0_dfinder_following.C
+    input: root://xrootd-vanderbilt.sites.opensciencegrid.org//store/hidata/HIRun2023A/HIForward0/MINIAOD/16Jan2024-v1/2810000/3cb20bb5-a7b1-43a2-8025-9807f4f51e71.root
+    reference: /eos/cms/store/group/phys_heavyions/wangj/Forest2023PbPb/Dzero_260212-hfle_2023PbPbUPC_Jan2024ReReco_20260212Forest_HIForward_Drej-pasor_Trig-4_isL1ZDCOr_microt.root
+    output_dir: /eos/user/e/evzhang/codex-eos/outputs/d0-reproduction/dfinder-following-2023/hiforward0_2023_dfinder_20000_section7_exact
+    max_events: 20000
+    reference_entries_scanned_per_stage: 5000000
+    cutflow:
+      stage00_all_candidates: {reproduced: 616733, reference_scan: 30800}
+      stage01_mass_window: {reproduced: 301750, reference_scan: 14855}
+      stage02_high_purity: {reproduced: 301750, reference_scan: 14855}
+      stage03_track_eta: {reproduced: 301750, reference_scan: 14855}
+      stage04_track_pt: {reproduced: 6920, reference_scan: 6375}
+      stage05_track_rel_pt_err: {reproduced: 6820, reference_scan: 6239}
+      stage06_dpt: {reproduced: 4891, reference_scan: 5317}
+      stage07_dy: {reproduced: 4754, reference_scan: 5317}
+      stage08_alpha: {reproduced: 584, reference_scan: 4242}
+      stage09_svpv_sig: {reproduced: 73, reference_scan: 2718}
+      stage10_sv_prob: {reproduced: 62, reference_scan: 2499}
+      stage11_dtheta: {reproduced: 44, reference_scan: 2468}
+    fit_note: reproduced selected fit is skipped with 44 candidates; reference scan diagnostic fit gives mean 1.8636011 GeV and sigma 0.018801453 GeV
+    validation_note: exact Section 7 formulas now used; topology-stage mismatch remains diagnostic because the reference is a reduced tree scan, not the same raw event set
+    event_filter_gap: exact 2023 forest Dfinder path prepends hltfilter, primaryVertexFilter, and zdcreco2023HardCode+zdcEnergyFilter0nOr; ZDCAnalyzersHC2023_cff is missing in current CMSSW_16_1_1 area
+  same_event_validation_2023_hiforward0_forest1:
+    status: done_superseded_by_files_1_to_4_summary
+    wrapper: /afs/cern.ch/work/e/evzhang/codex-work/analysis/d0-reproduction/scripts/run_same_event_validation.sh
+    macro: /afs/cern.ch/work/e/evzhang/codex-work/analysis/d0-reproduction/scripts/compare_forest_reference_same_events.C
+    forest_input: root://xrootd-vanderbilt.sites.opensciencegrid.org//store/user/jdlang/Run3_PbPbUPC/Forest_2023_Jan2024ReReco_2025Reforest/HIForward0/crab_2023PbPbUPC_Jan2024ReReco_20260212Forest_HIForward0/260212_170406/0000/HiForest_2023PbPbUPC_Jan24Reco_1.root
+    reference_skim: /eos/cms/store/group/phys_heavyions/wangj/Forest2023PbPb/Dzero_260212-hfle_2023PbPbUPC_Jan2024ReReco_20260212Forest_HIForward0_Drej-pasor_Trig-4.root
+    output_dir: /eos/user/e/evzhang/codex-eos/outputs/d0-reproduction/same-event-validation/hiforward0_forest1_vs_reference_first20k_massspec
+    event_match:
+      forest_entries: 8607
+      matched_events: 8607
+      missing_reference_events: 0
+    selected_counts:
+      forest_formula_no_mass_window: 140
+      reference_formula_no_mass_window: 140
+      reference_DpassCut23PAS_and_DptDy: 146
+      diagnostic_mass_window_final_formula: 68
+    interpretation: Dfinder/reduced-branch formula agrees on identical events; do not apply the mass-window diagnostic when drawing the mass spectrum.
+    general_output_commit: c600ac7
+  same_event_validation_2023_hiforward0_files_1_to_4:
+    status: done_full_reference_validation_for_files_2_to_4
+    wrapper: /afs/cern.ch/work/e/evzhang/codex-work/analysis/d0-reproduction/scripts/run_same_event_validation.sh
+    batch_wrapper: /afs/cern.ch/work/e/evzhang/codex-work/analysis/d0-reproduction/scripts/run_same_event_validation_batch.sh
+    macro: /afs/cern.ch/work/e/evzhang/codex-work/analysis/d0-reproduction/scripts/compare_forest_reference_same_events.C
+    reference_skim: /eos/cms/store/group/phys_heavyions/wangj/Forest2023PbPb/Dzero_260212-hfle_2023PbPbUPC_Jan2024ReReco_20260212Forest_HIForward0_Drej-pasor_Trig-4.root
+    summary_csv_local: repos/general-codex-output/data/same_event_validation_2023/multi_file_validation_summary.csv
+    summary_csv_lxplus_batch_attempt: /eos/user/e/evzhang/codex-eos/outputs/d0-reproduction/same-event-validation/hiforward0_batch_fullref_massspec_20260616T114259Z_summary.csv
+    files:
+      - file: 1
+        output_dir: /eos/user/e/evzhang/codex-eos/outputs/d0-reproduction/same-event-validation/hiforward0_forest1_vs_reference_first20k_massspec
+        reference_entries_scanned: 20000
+        matched_events: 8607
+        forest_formula_no_mass_window: 140
+        reference_formula_no_mass_window: 140
+        reference_DpassCut23PAS_and_DptDy: 146
+        diagnostic_stage11_forest_reference: [68, 68]
+      - file: 2
+        output_dir: /eos/user/e/evzhang/codex-eos/outputs/d0-reproduction/same-event-validation/hiforward0_forest2_vs_reference_fullref_massspec
+        reference_entries_scanned: 9784506
+        matched_events: 8307
+        forest_formula_no_mass_window: 80
+        reference_formula_no_mass_window: 80
+        reference_DpassCut23PAS_and_DptDy: 80
+        diagnostic_stage11_forest_reference: [35, 35]
+      - file: 3
+        output_dir: /eos/user/e/evzhang/codex-eos/outputs/d0-reproduction/same-event-validation/hiforward0_forest3_vs_reference_fullref_massspec
+        reference_entries_scanned: 9784506
+        matched_events: 7876
+        forest_formula_no_mass_window: 120
+        reference_formula_no_mass_window: 120
+        reference_DpassCut23PAS_and_DptDy: 126
+        diagnostic_stage11_forest_reference: [59, 59]
+      - file: 4
+        output_dir: /eos/user/e/evzhang/codex-eos/outputs/d0-reproduction/same-event-validation/hiforward0_forest4_vs_reference_fullref_massspec_retry
+        reference_entries_scanned: 9784506
+        matched_events: 7772
+        forest_formula_no_mass_window: 95
+        reference_formula_no_mass_window: 95
+        reference_DpassCut23PAS_and_DptDy: 97
+        diagnostic_stage11_forest_reference: [46, 46]
+    caveat: files 2-4 need full reference scan because early-row scans have zero overlap; file 4 first batch attempt was transiently empty but standalone retry succeeded
+review:
+  default_workflow: scripts/run-cms-reviewed-task.sh
+  producer: cms-analysis-producer
+  checkers:
+    - cms-data-checker
+    - cms-code-checker
+    - cms-math-checker
+  reviewer: cms-analysis-reviewer

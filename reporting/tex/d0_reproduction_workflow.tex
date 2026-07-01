@@ -1,0 +1,529 @@
+\documentclass[10pt]{article}
+\usepackage[margin=0.7in]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,urlcolor=blue,linkcolor=blue}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.35em}
+\sloppy
+\newcommand{\ananchor}[1]{\par{\footnotesize\emph{AN anchor: #1}}\par}
+
+\title{\texorpdfstring{Barebones \(D^0\) Analysis Workflow}{Barebones D0 Analysis Workflow}}
+\author{Evan Zhang}
+\date{Codex export prepared 2026-06-18}
+
+\begin{document}
+\maketitle
+\vspace{-1.4em}
+
+\section*{Goal}
+
+Reproduce the \(D^0\to K\pi\) mass peak starting from official MINIAOD. The
+analysis note, official forests, existing skims, and final plots are validation
+references, not the starting point for the reproduced chain.
+
+\section*{Timeline}
+
+\begin{enumerate}
+\item \textbf{Freeze the MINIAOD input.}
+Start from the 2023 HIForward MINIAOD datasets and the relevant certification
+metadata. Save an explicit DAS file manifest for each CRAB production so every
+forest can be traced back to exact MINIAOD files.
+\ananchor{Sec. 2 lines 129--143 define the 2023 PbPb dataset, Golden JSON,
+CMSSW/global-tag production context, run/luminosity table, trigger strategy,
+and offline-selection references. Appendix A lines 996--1013 records the
+run-range exclusions. The exact DAS manifest is reproduction bookkeeping added
+here.}
+
+\item \textbf{Forest the MINIAOD.}
+Run CMSSW/CRAB foresting to reconstruct only the branches needed for this
+analysis: event identifiers, vertex/filter information, tracks, PF/HF
+candidates, ZDC rechits, and Dfinder \(K\pi\) candidates. For current large
+tests, use raw CRAB output with minimal analyzer settings: keep analysis
+content, disable irrelevant muon/PF-jet/ZDC-digi outputs where safe.
+\ananchor{Sec. 2 lines 136--139 state the CMSSW/global-tag production context;
+Sec. 7 lines 477--486 describes the \(D^0\) candidate construction from
+oppositely charged tracks, the \(K/\pi\) mass hypotheses, and the secondary
+vertex fit. The minimal branch pruning is our reproducibility implementation,
+not a separate AN selection.}
+
+\item \textbf{Validate the recreated forest.}
+Before skimming, compare recreated forests against official forests/skims on
+overlapping events where possible. Check schema, event counts, ZDC behavior,
+and same-event Dfinder candidate behavior. If this fails, fix foresting before
+touching the physics skim.
+\ananchor{No standalone AN line: this is a reproduction closure check. The AN
+targets being checked are the event selection in Sec. 5 lines 287--318, the
+\(D^0\) reconstruction and candidate selection in Sec. 7 lines 477--504, and
+the signal-extraction model in Sec. 7.2 lines 540--583.}
+
+\item \textbf{Make the event skim.}
+From the recreated forest, select good UPC-like events. Apply event-quality
+filters, ZDC 0nXn topology selection, and HF rapidity-gap selection. Save both
+the selected-event tree and all Dfinder candidates inside selected events.
+\ananchor{Sec. 5.1 lines 287--318 define the offline event-selection strategy:
+primary vertex, \(n_{\mathrm{Vtx}}\), halo rejection, ZDC XOR, and HF
+rapidity-gap requirements. Sec. 5.2 lines 319--326 defines the offline ZDC
+signal and 1n thresholds; Sec. 5.3 lines 349--366 motivates the HF \(E_{\max}\)
+criterion, and lines 393--419 describe the scan and chosen HF thresholds.
+Appendix E lines 1094--1124 gives the ZDC ADC-to-energy recipe.}
+
+\emph{Cuts used:}
+\begin{itemize}
+\item certified lumisection selection from the Golden JSON;
+\item trigger bookkeeping: \texttt{isZDCOr == 1};
+\item primary-vertex boolean filter: \texttt{pprimaryVertexFilter == 1};
+\item vertex-position quality cut: \(|z_{\mathrm{PV}}| < 15~\mathrm{cm}\);
+\item vertex-multiplicity cut: \(1 \le \texttt{nVtx} \le 3\);
+\item cluster-compatibility boolean filter:
+\texttt{pclusterCompatibilityFilter == 1};
+\item halo-rejection boolean filter: \texttt{cscTightHalo2015Filter == true};
+\item derived ZDC cut:
+\[
+(\texttt{ZDCsumMinus} > T_{\mathrm{ZDC}}^- \ \&\&
+ \texttt{ZDCsumPlus} < T_{\mathrm{ZDC}}^+)
+\quad \mathrm{or} \quad
+(\texttt{ZDCsumPlus} > T_{\mathrm{ZDC}}^+ \ \&\&
+ \texttt{ZDCsumMinus} < T_{\mathrm{ZDC}}^-);
+\]
+\item derived HF cut:
+\[
+(\texttt{ZDCgammaN} \ \&\&\ \texttt{HFEMaxPlus} < T_{\mathrm{HF}}^+)
+\quad \mathrm{or} \quad
+(\texttt{ZDCNgamma} \ \&\&\ \texttt{HFEMaxMinus} < T_{\mathrm{HF}}^-).
+\]
+\end{itemize}
+
+\item \textbf{Make the \(D^0\) candidate skim.}
+From candidates in selected events, apply daughter-track quality cuts,
+fiducial \(D^0\) kinematics, and bin-dependent topological cuts. Save the
+selected \(D^0\) candidate tree.
+\ananchor{Sec. 7 lines 477--504 defines \(D^0\) reconstruction, track criteria,
+\(K/\pi\) assignment, secondary-vertex fitting, topological variables,
+rectangular cuts, and the BDT cross-check. Lines 505--507 introduce the
+before/after-BDT distribution checks; the MC/data topology comparisons are
+shown around lines 573--585.}
+
+\emph{Cuts used:}
+\begin{itemize}
+\item fit-range cut: \(1.70 < \texttt{Dmass} < 2.05~\mathrm{GeV}\);
+\item \(D^0\) fiducial cuts:
+\[
+2 < \texttt{Dpt} \le 12~\mathrm{GeV},
+\qquad |\texttt{Dy}| \le 2;
+\]
+\item daughter-track momentum cuts:
+\[
+\texttt{Dtrk1Pt} > 1~\mathrm{GeV},
+\qquad \texttt{Dtrk2Pt} > 1~\mathrm{GeV};
+\]
+\item daughter-track acceptance cuts:
+\[
+|\texttt{Dtrk1Eta}| < 2.4,
+\qquad |\texttt{Dtrk2Eta}| < 2.4;
+\]
+\item daughter-track relative momentum-error cuts:
+\[
+\texttt{Dtrk1PtErr}/\texttt{Dtrk1Pt} < 0.1,
+\qquad
+\texttt{Dtrk2PtErr}/\texttt{Dtrk2Pt} < 0.1;
+\]
+\item daughter-track high-purity boolean filters:
+\texttt{Dtrk1highPurity == true} and \texttt{Dtrk2highPurity == true}, where
+available in the from-forest branch set;
+\item derived topology sideband cut used for optimization only:
+\[
+T_{\mathrm{sb}}^{\mathrm{in}}
+< |\texttt{Dmass} - m_{D^0}|
+< T_{\mathrm{sb}}^{\mathrm{out}};
+\]
+\item derived topological cuts:
+These are the same four topological selections listed in AN Sec. 7
+lines 487--493 and Table 7. The branch-to-AN mapping is:
+\(\texttt{Dalpha}\) is the pointing angle \(\alpha\) between the reconstructed
+\(D^0\) momentum and the primary-to-secondary vertex direction;
+\(\texttt{DsvpvSig}\) is the normalized 3D decay length \(d_0/\sigma(d_0)\);
+\(\texttt{Dchi2cl}\) is the secondary-vertex probability/confidence level
+(not a raw \(\chi^2\)); and \(\texttt{Ddtheta}\) is the daughter-track opening
+angle \(\Delta\theta\).
+\[
+\texttt{Dalpha} < T_{\alpha}(p_T,|y|), \qquad
+\texttt{DsvpvSig} > T_{\mathrm{svpv}}(p_T,|y|),
+\]
+\[
+\texttt{Dchi2cl} > T_{\mathrm{vtxProb}}(p_T,|y|), \qquad
+\texttt{Ddtheta} < T_{\Delta\theta}(p_T,|y|).
+\]
+\end{itemize}
+
+\item \textbf{Make the mass peak.}
+Use the selected candidate tree to plot and fit the \(K\pi\) invariant-mass
+distribution, inclusive and in the final analysis bins. The broad mass range is
+for fitting and sidebands; it should not be tightened just to make a cleaner
+peak.
+\ananchor{Sec. 7.2 lines 540--583 defines raw-yield extraction, fit
+components, MC-constrained swapped and peaking-background shapes, signal-width
+handling, trigger choices by \(p_T\), and the binned \(D^0\) mass fits shown in
+Figs. 34--36.}
+
+\emph{Cuts used:}
+\begin{itemize}
+\item no additional peak-sculpting cut beyond the candidate skim;
+\item final binning cuts in \(p_T\) and \(y\);
+\item mass-fit model and sideband/cross-check definitions for yield extraction.
+\end{itemize}
+\end{enumerate}
+
+\section*{Cut Families and How They Are Justified}
+
+\begin{description}
+\item[Event quality.]
+Removes bad collision events, bad vertices, halo/noise-like events, and other
+detector pathologies. These are standard reconstruction-quality requirements
+from forest/skim branches, not cuts tuned on the \(D^0\) mass peak.
+
+\item[ZDC topology.]
+Selects UPC-like 0nXn events: one ZDC side is neutron-like and the other is
+0n-like. The thresholds are data-driven. The method uses data/ZeroBias ZDC
+energy structure and EmptyBX noise tails to identify the neutron onset while
+controlling fake neutron assignment. The current official \(D^0\) MC is not
+used for this because its checked detector-level ZDC neutron response is not
+usable.
+
+\item[HF rapidity gap.]
+Rejects hadronic activity on the photon-going side. The threshold is derived
+with an automated data/MC scan: prompt \(D^0\) MC for signal-like retention
+where useful, low-track data as UPC-like control, high-track data as
+hadronic-like control, and EmptyBX as a detector-noise cross-check.
+
+\item[Daughter-track quality.]
+Ensures the kaon/pion tracks are reconstructable and well measured. These cuts
+use standard track quality, tracking acceptance, minimum track momentum, and
+bounded relative momentum uncertainty. They are detector-quality cuts rather
+than peak-optimized cuts.
+
+\item[\(D^0\) fiducial region.]
+Defines the analysis phase space in \(p_T\) and \(y\). This is part of the
+measurement definition. The broad mass range is used for fitting and sideband
+studies.
+
+\item[Topological cuts.]
+Suppress random \(K\pi\) combinations while retaining displaced,
+vertex-compatible \(D^0\) decays. The method uses prompt \(D^0\) MC for signal
+efficiency and data sidebands for combinatorial background. Current production
+uses rectangular cuts in pointing angle, decay-length significance, vertex
+probability, and angular consistency, chosen by a predeclared
+efficiency/background plateau procedure.
+\end{description}
+
+\section*{How the Nontrivial Cuts Are Generated}
+
+\begin{description}
+\item[ZDC thresholds.]
+Characterize the ZDC neutron-energy structure in data and compare it with
+EmptyBX/noise tails. Choose a stable neutron-onset threshold with controlled
+noise leakage. This is explicitly data-driven.
+
+\item[HF thresholds.]
+Scan the gap-side maximum HF energy. Require high retention for signal-like or
+UPC-like samples and rejection of high-activity data. EmptyBX is used to check
+that the chosen threshold is not a detector-noise artifact.
+
+\item[Topology sidebands.]
+Use MC mass resolution and data sideband balance to define sidebands away from
+the \(D^0\) signal peak. This prevents optimizing the cuts directly on the
+signal region.
+
+\item[Topology floors.]
+First derive basic displaced-vertex quality floors with loose pointing cuts.
+Use MC signal efficiency plus data-sideband and nonmatched-MC background
+rejection.
+
+\item[Pointing cuts.]
+With the floors fixed, scan pointing variables and accept a stable plateau of
+choices that preserves signal and does not increase background proxies. The
+analysis-note row is treated as a closure point inside the plateau, not as the
+hidden optimizer.
+\end{description}
+
+\section*{Example Cut Diagrams}
+
+\textbf{ZDC thresholds.}
+
+\begin{center}
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{support/figures/preflight_medium_scale/zdc_minus_1n_threshold.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{support/figures/preflight_medium_scale/zdc_plus_1n_threshold.png}
+\end{minipage}
+\end{center}
+
+\emph{How the cut is made.}
+The ZDC energy spectrum is compared with EmptyBX/noise behavior. A neutron
+threshold is placed at the stable onset of the one-neutron structure, far
+enough above the noise tail to keep fake neutron assignments controlled. Events
+pass the 0nXn topology when one side is neutron-like and the opposite side is
+consistent with 0n/noise.
+
+\textbf{HF thresholds.}
+
+\begin{center}
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{support/figures/hf_gap_derivation/hf_minus_threshold_efficiencies.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{support/figures/hf_gap_derivation/hf_plus_threshold_efficiencies.png}
+\end{minipage}
+\end{center}
+
+\emph{How the cut is made.}
+The scanned variable is the maximum HF energy on the side that is supposed to
+be quiet. For a proposed threshold \(T\), the event passes the HF rapidity-gap
+cut if
+\[
+E_{\mathrm{HF,max}}^{\mathrm{gap}} < T.
+\]
+The \(nTrack\) requirement is not applied as a physics selection. It is used
+only to build data control samples for choosing \(T\). The low/high
+\(\mathrm{nTrack}\) samples are built from
+\(\mathrm{nTrackInAcceptanceHP}\): low \(\mathrm{nTrack}\) means
+\(\mathrm{nTrack} \le 3\), and high \(\mathrm{nTrack}\) means
+\(\mathrm{nTrack} \ge 10\), for the current full-sample derivation. The
+low-\(\mathrm{nTrack}\) pass curve is
+\[
+\mathrm{Pass}_{\mathrm{low}}(T)
+=
+\frac{N(\mathrm{nTrack} \le 3,\ E_{\mathrm{HF,max}}^{\mathrm{gap}}<T)}
+{N(\mathrm{nTrack} \le 3)},
+\]
+which is a UPC-like data-retention proxy. The high-\(\mathrm{nTrack}\) leak
+curve is
+\[
+\mathrm{Leak}_{\mathrm{high}}(T)
+=
+\frac{N(\mathrm{nTrack} \ge 10,\ E_{\mathrm{HF,max}}^{\mathrm{gap}}<T)}
+{N(\mathrm{nTrack} \ge 10)},
+\]
+which is a hadronic-activity leakage proxy. The current working numerical rule
+is
+\[
+\mathrm{Pass}_{\mathrm{low}}(T) \ge 0.9765,
+\qquad
+\mathrm{Leak}_{\mathrm{high}}(T) \le 0.85,
+\]
+and, when a same-side prompt \(D^0\) MC control sample is available,
+\[
+\epsilon_{\mathrm{MC}}^{\mathrm{gap}}(T) \ge 0.989.
+\]
+For each side, the operational choice is the smallest threshold satisfying
+these criteria on a stable plateau, with EmptyBX used to check that the choice
+is not dominated by detector noise. When the MC control sample is absent, the
+MC efficiency is recorded as unavailable rather than as a physical zero. In the
+plots, the selected point is therefore not the value that makes the prettiest
+mass peak; it is the value where the retention/rejection curves show a stable
+rapidity-gap definition.
+
+\textbf{Topology sidebands.}
+
+\begin{center}
+\includegraphics[width=0.72\textwidth]{support/figures/topology_sideband_independent/sideband_resolution_rule.png}
+\end{center}
+
+\emph{How the cut is made.}
+The mass sideband is one global window, not a different window for each
+\(p_T,|y|\) bin:
+\[
+0.07 < |\texttt{Dmass} - 1.86484| < 0.12~\mathrm{GeV}.
+\]
+Equivalently, the lower and upper sidebands are
+\[
+1.74484 < \texttt{Dmass} < 1.79484,
+\qquad
+1.93484 < \texttt{Dmass} < 1.98484.
+\]
+This same mass window is applied separately inside each analysis bin. The
+topological cut values are bin-dependent, but the sideband mass definition is
+global. The window is derived from prompt truth-matched MC: estimate the
+mass-resolution scale \(\sigma_{68}\) in each bin, take the worst bin, and set
+the inner and outer sideband edges near \(3\sigma_{\max}\) and
+\(5\sigma_{\max}\), rounded to 10 MeV. The plotted points are therefore the MC
+mass-resolution scales in each bin; the horizontal lines are the resulting
+global sideband edges. These sideband candidates act as the data-background
+proxy for topological scans, so the signal region is not used to choose the
+cuts.
+
+\textbf{Topology floors.}
+
+\begin{center}
+\emph{\(\texttt{Dchi2cl}\) floor scan.}\\[0.2em]
+\includegraphics[width=0.86\textwidth]{support/figures/topological_floor_independent_sideband/chi2_floor_profile_grid.png}
+
+\vspace{0.5em}
+\emph{\(\texttt{DsvpvSig}\) floor scan after fixing \(\texttt{Dchi2cl}\).}\\[0.2em]
+\includegraphics[width=0.86\textwidth]{support/figures/topological_floor_independent_sideband/floor_profile_grid.png}
+\end{center}
+
+\emph{How the cut is made.}
+The floors are lower bounds on the basic displaced-vertex quality variables:
+\[
+\texttt{DsvpvSig} > T_{\mathrm{svpv}},
+\qquad
+\texttt{Dchi2cl} > T_{\mathrm{vtxProb}}.
+\]
+\(\texttt{DsvpvSig}\) is the secondary-to-primary vertex displacement divided
+by its uncertainty, so larger values mean a more clearly displaced \(D^0\)
+decay. \(\texttt{Dchi2cl}\) is the secondary-vertex fit confidence, so larger
+values mean the two tracks form a more credible common decay vertex. This is
+the AN's ``Secondary vertex probability'' cut in Table 7, despite the branch
+name containing ``chi2cl''.
+
+The scan uses loose pointing cuts so the floor variables are isolated. Prompt
+truth-matched MC is the signal proxy; non-truth-matched MC and data sidebands
+are background proxies. The current rule first chooses the first
+\(\texttt{Dchi2cl}\) floor with MC-background rejection \(\ge 0.04\) and MC
+signal loss \(\le 0.06\). It then chooses the first \(\texttt{DsvpvSig}\)
+floor with MC-background rejection \(\ge 1/3\), data-sideband rejection
+\(\ge 0.18\), and MC signal retention \(\ge 0.55\). This gives
+\(\texttt{Dchi2cl}>0.1\) in all bins, \(\texttt{DsvpvSig}>2.5\) for
+\(2<p_T<5\), and \(\texttt{DsvpvSig}>3.5\) for higher \(p_T\). In the plots,
+the x-axis is the scanned floor variable, the curves show signal retention and
+background rejection, and the dashed line is the selected floor.
+
+\textbf{Pointing cuts.}
+
+\begin{center}
+\includegraphics[width=0.86\textwidth]{support/figures/topological_pointing_independent_sideband/pointing_plateau_grid.png}
+\end{center}
+
+\emph{How the cut is made.}
+After the topology floors are fixed, the pointing variables are scanned as
+upper bounds: smaller angles mean the reconstructed \(D^0\) momentum points
+more consistently back to the production vertex. The selected value is taken
+from a plateau where MC signal efficiency remains high and the sideband
+background proxy does not rise. This separates the pointing choice from the
+floor choice and avoids tuning all topology variables directly on the signal
+peak. In AN language, this section covers the pointing angle \(\alpha\) and
+the daughter-track opening angle \(\Delta\theta\).
+
+\section*{BDT Topology Optimization Check}
+
+A ROOT/TMVA BDT was trained as a cross-check using the same topology variables:
+\[
+\texttt{Dalpha},\quad \texttt{DsvpvSig},\quad \texttt{Dchi2cl},\quad
+\texttt{Ddtheta}.
+\]
+These are the AN variables \(\alpha\), normalized 3D decay length,
+secondary-vertex probability, and \(\Delta\theta\), respectively.
+Signal was prompt truth-matched \(D^0\) MC. Background was data sidebands.
+Two threshold rules were tested: a peak-blind Punzi scan on held-out MC and
+sidebands, and a data-split scan where half the data chooses the threshold by
+sideband-subtracted peak significance and the other half validates it.
+
+\begin{center}
+\small
+\begin{tabular}{lrrrrr}
+\hline
+Bin & BDT cut & MC eff. & Sideband rej. & Val. \(Z\) & AN \(Z\) \\
+\hline
+\(|y|<1,\ 2<p_T<5\) & \(-0.950\) & 1.000 & 0.000 & 2.67 & 4.61 \\
+\(|y|<1,\ 5<p_T<8\) & \(-0.950\) & 1.000 & 0.000 & 5.16 & 6.33 \\
+\(|y|<1,\ 8<p_T<12\) & \(-0.950\) & 1.000 & 0.000 & 2.68 & 3.08 \\
+\(1<|y|<2,\ 2<p_T<5\) & \(-0.950\) & 1.000 & 0.000 & 0.26 & 2.71 \\
+\(1<|y|<2,\ 5<p_T<8\) & \(-0.950\) & 1.000 & 0.000 & 2.26 & 2.86 \\
+\(1<|y|<2,\ 8<p_T<12\) & \(-0.950\) & 1.000 & 0.000 & 1.40 & 4.73 \\
+\hline
+\end{tabular}
+\end{center}
+
+The left edge of the scan is \(-0.950\), so the selected BDT threshold accepts
+all candidates in every bin. In this protocol, the BDT does not find a
+nontrivial yield-optimizing topology cut. The nominal rectangular topology
+selection remains the more useful working choice for producing a clean peak.
+
+\begin{center}
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{support/figures/bdt_topology_98forests/absy0to1_pt2to5_bdt_threshold_scan.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{support/figures/bdt_topology_98forests/absy0to1_pt5to8_bdt_threshold_scan.png}
+\end{minipage}
+
+\vspace{0.4em}
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{support/figures/bdt_topology_98forests/absy0to1_pt8to12_bdt_threshold_scan.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{support/figures/bdt_topology_98forests/absy1to2_pt2to5_bdt_threshold_scan.png}
+\end{minipage}
+
+\vspace{0.4em}
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{support/figures/bdt_topology_98forests/absy1to2_pt5to8_bdt_threshold_scan.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{support/figures/bdt_topology_98forests/absy1to2_pt8to12_bdt_threshold_scan.png}
+\end{minipage}
+\end{center}
+
+\begin{center}
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{support/figures/bdt_topology_98forests/absy0to1_pt5to8_mass_bdt_vs_an.png}
+\end{minipage}
+\hfill
+\begin{minipage}{0.48\textwidth}
+\centering
+\includegraphics[width=\textwidth]{support/figures/bdt_topology_98forests/absy1to2_pt8to12_mass_bdt_vs_an.png}
+\end{minipage}
+\end{center}
+
+\section*{Extra Reproduction Work Beyond the Analysis Note}
+
+\begin{itemize}
+\item Exact CRAB input manifests are saved for every production.
+\item Forest output is minimized to the branch set needed for this \(D^0\)
+workflow where safe.
+\item Recreated forests are validated against official products on same events
+before large-scale use.
+\item ZDC reconstruction and calibration/backport behavior are cross-checked
+against official reforested outputs.
+\item ZDC, HF, sideband, and topology choices are rederived or independently
+justified using data, control samples, MC, and predeclared criteria.
+\item CRAB smoke and medium-scale tests are used before full production to
+check job splitting, event counts, output transfer, schema, and skim-to-peak
+plumbing.
+\item Task names, paths, input manifests, and validation results are logged so
+the chain is auditable.
+\end{itemize}
+
+\section*{One-Line Chain}
+
+\[
+\text{MINIAOD}
+\rightarrow \text{recreated forest}
+\rightarrow \text{event skim}
+\rightarrow \text{\(D^0\) candidate skim}
+\rightarrow \text{\(K\pi\) mass peak}.
+\]
+
+\end{document}

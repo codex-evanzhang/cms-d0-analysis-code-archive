@@ -1,0 +1,9 @@
+category	archive_path	source_path	how_used
+d0_scripts	d0-reproduction/scripts	research/cms-d0-analysis/scripts	D0 reproduction analysis code: foresting wrappers, ROOT macros, cut derivation, plotting, validation, report building.
+d0_configs	d0-reproduction/config	research/cms-d0-analysis/config	D0 reproduction configuration files for ZDC selection and selection-independence tracking.
+d0_docs	d0-reproduction/docs	research/cms-d0-analysis/*.md	Workflow notes, run logs, command recipes, and analysis status documentation.
+dplus_scripts	dplus-generalization/scripts	research/cms-dplus-analysis/scripts	D+ peak-finding generalization code using Dfinder ntDkpipi-style outputs.
+dplus_docs	dplus-generalization/docs	research/cms-dplus-analysis/*.md	D+ smoke/medium-run notes and command provenance.
+official_mc	official-mc-fragments	work/cms-official-mc	Official prompt/nonprompt D0 UPC MC fragments rendered from stored McM snapshots.
+reporting	reporting	repos/general-codex-output	TeX and slide-generation code used to present D0/D+ reproduction outputs.
+orchestration	orchestration	scripts	Selected agent-host helpers for LXPLUS, CMS workflow, project sync, and tool registry checks.
