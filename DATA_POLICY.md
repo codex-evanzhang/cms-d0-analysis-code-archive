@@ -22,3 +22,7 @@ Excluded:
 
 If a future workflow needs a data product, record only the path/provenance and
 the command that consumes it. Do not commit the data product itself.
+
+Generated CRAB `PSet.py` / `PSetDump.py` files are allowed when they are needed
+to document exactly which CMSSW configuration was submitted. CRAB logs and job
+outputs are not allowed.

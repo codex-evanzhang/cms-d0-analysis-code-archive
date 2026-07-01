@@ -31,8 +31,29 @@ Many scripts were synced to and executed from:
 ```
 
 Those files are represented here by their local source-of-truth copies under
-`d0-reproduction/scripts/`. A live LXPLUS refresh requires current CERN
-interactive authentication.
+`d0-reproduction/scripts/` and by exact public-safe remote snapshots under
+`lxplus-execution/`. A live LXPLUS refresh requires current CERN interactive
+authentication.
+
+## Custom CMSSW Code
+
+Custom CMSSW code made for the reproduction is archived under:
+
+```text
+cmssw-custom/EvanAnalysis/
+```
+
+This includes the minimal D0 forest producer and D0 Pythia smoke-test package.
+
+Small upstream/reference CMSSW files directly inspected or modified are archived
+under:
+
+```text
+cmssw-reference/
+```
+
+This includes `Dfinder.cc`, 2023 ZDC analyzer config/reference files, and the
+old 2026 forest CRAB config used only as a compute-resource reference.
 
 ## EOS Outputs
 

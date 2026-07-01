@@ -48,6 +48,12 @@ def category(path: Path) -> str:
         return "dplus"
     if parts[0] == "official-mc-fragments":
         return "official_mc"
+    if parts[0] == "lxplus-execution":
+        return "lxplus_execution"
+    if parts[0] == "cmssw-custom":
+        return "cmssw_custom"
+    if parts[0] == "cmssw-reference":
+        return "cmssw_reference"
     if parts[0] == "reporting":
         return "reporting"
     if parts[0] == "orchestration":

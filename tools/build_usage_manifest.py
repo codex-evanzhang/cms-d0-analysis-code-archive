@@ -42,6 +42,30 @@ def source_for(rel: Path) -> str:
         return "research/cms-dplus-analysis/" + rel.name
     if text.startswith("official-mc-fragments/"):
         return text.replace("official-mc-fragments/", "work/cms-official-mc/", 1)
+    if text.startswith("lxplus-execution/d0-reproduction/"):
+        return text.replace(
+            "lxplus-execution/d0-reproduction/",
+            "/afs/cern.ch/work/e/evzhang/codex-work/analysis/d0-reproduction/",
+            1,
+        )
+    if text.startswith("lxplus-execution/dplus-peak/"):
+        return text.replace(
+            "lxplus-execution/dplus-peak/",
+            "/afs/cern.ch/work/e/evzhang/codex-work/analysis/dplus-peak/",
+            1,
+        )
+    if text.startswith("cmssw-custom/"):
+        return text.replace(
+            "cmssw-custom/",
+            "/afs/cern.ch/user/e/evzhang/Foresting/CMSSW_16_1_1/src/",
+            1,
+        )
+    if text.startswith("cmssw-reference/"):
+        return text.replace(
+            "cmssw-reference/",
+            "/afs/cern.ch/user/e/evzhang/Foresting/CMSSW_16_1_1/src/",
+            1,
+        )
     if text.startswith("reporting/scripts/"):
         return text.replace("reporting/scripts/", "repos/general-codex-output/support/slides/scripts/", 1)
     if text.startswith("reporting/tex/"):
@@ -63,6 +87,12 @@ def context_for(rel: Path) -> str:
         return "D+ Kpipi peak generalization test"
     if text.startswith("official-mc-fragments/"):
         return "Official D0 UPC MC setup"
+    if text.startswith("lxplus-execution/"):
+        return "Exact LXPLUS execution snapshot"
+    if text.startswith("cmssw-custom/"):
+        return "Custom CMSSW code created for the reproduction"
+    if text.startswith("cmssw-reference/"):
+        return "Small CMSSW/Dfinder/ZDC reference subset"
     if text.startswith("reporting/"):
         return "Report, Overleaf, and slide generation"
     if text.startswith("orchestration/"):

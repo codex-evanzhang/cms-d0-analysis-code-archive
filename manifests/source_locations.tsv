@@ -5,5 +5,8 @@ d0_docs	d0-reproduction/docs	research/cms-d0-analysis/*.md	Workflow notes, run l
 dplus_scripts	dplus-generalization/scripts	research/cms-dplus-analysis/scripts	D+ peak-finding generalization code using Dfinder ntDkpipi-style outputs.
 dplus_docs	dplus-generalization/docs	research/cms-dplus-analysis/*.md	D+ smoke/medium-run notes and command provenance.
 official_mc	official-mc-fragments	work/cms-official-mc	Official prompt/nonprompt D0 UPC MC fragments rendered from stored McM snapshots.
+lxplus_execution	lxplus-execution	/afs/cern.ch/work/e/evzhang/codex-work/analysis	Exact public-safe LXPLUS execution scripts/configs/manifests, including CRAB configs and generated PSets.
+cmssw_custom	cmssw-custom	/afs/cern.ch/user/e/evzhang/Foresting/CMSSW_16_1_1/src/EvanAnalysis	Custom CMSSW packages created for minimal D0 foresting and D0 Pythia smoke tests.
+cmssw_reference	cmssw-reference	/afs/cern.ch/user/e/evzhang/Foresting/CMSSW_16_1_1/src	Small upstream CMSSW/Dfinder/ZDC files directly inspected, wrapped, or modified.
 reporting	reporting	repos/general-codex-output	TeX and slide-generation code used to present D0/D+ reproduction outputs.
 orchestration	orchestration	scripts	Selected agent-host helpers for LXPLUS, CMS workflow, project sync, and tool registry checks.

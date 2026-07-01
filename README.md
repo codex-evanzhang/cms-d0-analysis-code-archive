@@ -20,6 +20,13 @@ workflow and testing the D+ generalization path.
   generalization test.
 - `official-mc-fragments/`: official D0 UPC MC fragments rendered from stored
   McM snapshots for reproducibility of the MC setup.
+- `lxplus-execution/`: exact public-safe copies of code/config/manifests from
+  the LXPLUS execution workspaces, including CRAB configs and generated PSets.
+- `cmssw-custom/`: custom CMSSW packages created for the reproduction, such as
+  the minimal D0 forest producer and D0 Pythia smoke-test package.
+- `cmssw-reference/`: small upstream CMSSW/Dfinder/ZDC files that were directly
+  inspected or wrapped. This is a reference subset, not a full CMSSW vendor
+  copy.
 - `reporting/`: TeX/report/slide-generation sources used to present the
   reproduction outputs.
 - `orchestration/`: selected local helper scripts used to run LXPLUS, CMS, and
@@ -35,6 +42,8 @@ This public repository intentionally excludes:
 - Credentials, tokens, passphrases, private keys, cookies, and local secrets.
 - Large rendered plot/output directories.
 - Full upstream CMSSW/Dfinder/HiForest source trees.
+- Runtime logs, CRAB sandboxes beyond public-safe configs/PSets, and EOS output
+  products.
 
 For upstream CMSSW/Dfinder code, this archive keeps the wrappers, configs, and
 recorded provenance needed to find or recreate the execution environment rather
@@ -61,6 +70,17 @@ The D+ path is included as a separate generalization test:
   -> D+ candidate mass spectrum
   -> preliminary Kpipi peak diagnostics
 ```
+
+## Refreshing From LXPLUS
+
+With valid CERN SSH access, refresh the LXPLUS execution snapshot:
+
+```bash
+tools/update_from_lxplus.sh
+```
+
+This pulls code/config/manifest files only, regenerates manifests, and runs the
+public-safety check.
 
 ## Rebuilding The Manifest
 

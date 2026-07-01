@@ -1,0 +1,10 @@
+<use name="CommonTools/UtilAlgos"/>
+<use name="DataFormats/PatCandidates"/>
+<use name="DataFormats/TrackReco"/>
+<use name="DataFormats/VertexReco"/>
+<use name="FWCore/Framework"/>
+<use name="FWCore/ParameterSet"/>
+<use name="FWCore/ServiceRegistry"/>
+<use name="rootcore"/>
+
+<flags EDM_PLUGIN="1"/>
