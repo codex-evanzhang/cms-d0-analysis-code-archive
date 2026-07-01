@@ -123,3 +123,5 @@ reporting/tex/dplus_mass_peak_search.tex	repos/general-codex-output/dplus_mass_p
 reporting/tex/main.tex	repos/general-codex-output/main.tex	Report, Overleaf, and slide generation	TeX source for public-facing analysis/report output.
 tools/build_code_manifest.py	tools/build_code_manifest.py	Archive maintenance	Report, table, scaffold, or configuration builder.
 tools/build_usage_manifest.py	tools/build_usage_manifest.py	Archive maintenance	Report, table, scaffold, or configuration builder.
+tools/public_safety_check.sh	tools/public_safety_check.sh	Archive maintenance	Shell workflow wrapper.
+tools/update_from_agent_workspace.sh	tools/update_from_agent_workspace.sh	Archive maintenance	Shell workflow wrapper.
